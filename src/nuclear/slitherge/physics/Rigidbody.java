@@ -4,9 +4,8 @@ import nuclear.slitherge.top.Entity;
 import nuclear.slitherge.top.Universe;
 import nuclear.slitherge.top.io;
 
-public abstract class Rigidbody extends Entity{
+public abstract class Rigidbody extends Collidable{
 	public Vector2 velocity;
-	private Collider collider;
 	private double tick_len=Universe.tick_len;
 	public Rigidbody(int dimt, double x, double y) {
 		super(dimt, x, y);
@@ -18,7 +17,7 @@ public abstract class Rigidbody extends Entity{
 	public void update() {
 		for (Entity e : Universe.myDim(this).getEntities(this)) {
 			if(e instanceof Rigidbody){
-				Vector2 collisionForce=((Rigidbody)e).getCollider().collide(collider);
+				Vector2 collisionForce=((Rigidbody)e).getCollider().collide(collider,getVector());
 				if(collisionForce!=null){
 					addForce(collisionForce);
 					((Rigidbody)e).addForce(collisionForce.neg());
@@ -37,8 +36,5 @@ public abstract class Rigidbody extends Entity{
 		io.println("Adding force "+force.toString()+" to velocity "+velocity.toString());
 		velocity=velocity.add(force.mult(tick_len));
 		io.println("New velocity: "+velocity.toString());
-	}
-	public Collider getCollider(){
-		return collider;
 	}
 }

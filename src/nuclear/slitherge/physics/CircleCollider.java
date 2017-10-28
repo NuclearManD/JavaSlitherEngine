@@ -10,7 +10,7 @@ public class CircleCollider extends Collider {
 	public Vector2 collide(Collider collider,Vector2 offset) {
 		double bound=collider.getBound(offset);
 		if(bound!=-1&&offset.magnitude()<(bound+radius)) {
-			return ;
+			return new Vector2(0,0);
 		}else
 			return null;
 	}
