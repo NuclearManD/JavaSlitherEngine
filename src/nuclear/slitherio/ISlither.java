@@ -1,7 +1,7 @@
 package nuclear.slitherio;
 
 import java.util.Scanner;
-
+@Deprecated
 public class ISlither {
 	public static final boolean LEAST_TO_GREATEST = true;
 	public static final boolean GREATEST_TO_LEAST = false;
