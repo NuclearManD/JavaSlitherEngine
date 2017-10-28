@@ -47,13 +47,13 @@ public class Transaction {
 	}
 	public String toString() {
 		String o="Transaction: ";
-		if(type==this.TRANSACTION_ARBITRARY) {
+		if(type==TRANSACTION_ARBITRARY) {
 			o+="Arbitrary";
-		}if(type==this.TRANSACTION_SEND_COIN) {
+		}if(type==TRANSACTION_SEND_COIN) {
 			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 512, TRANSACTION_LENGTH-1))+" Coins to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 512));
-		}if(type==this.TRANSACTION_SEND_GAS) {
+		}if(type==TRANSACTION_SEND_GAS) {
 			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 512, TRANSACTION_LENGTH-1))+" Gas to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 512));
-		}if(type==this.TRANSACTION_MAKE_PROGRAM) {
+		}if(type==TRANSACTION_MAKE_PROGRAM) {
 			o+="Upload Program\n";
 			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
 		}else
