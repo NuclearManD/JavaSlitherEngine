@@ -123,7 +123,8 @@ public class Transaction {
 			o+="Upload Program\n";
 			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));*/
 		}if(type==TRANSACTION_STORE_FILE) {
-			o+="Store File With Meta '"+new String(Arrays.copyOfRange(descriptor, 32, descriptor.length-KEY_LEN),StandardCharsets.UTF_8)+"'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
+			o+="Store File With Meta '"+new String(Arrays.copyOfRange(descriptor, 32, descriptor.length-KEY_LEN),StandardCharsets.UTF_8);
+			o+="'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
 		}else
 			o+="Unknown Type";
 		o+="\n > Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
