@@ -25,7 +25,7 @@ public class ECDSAKey {
 			key=null;
 		}
 	}
-	public ECDSAKey(byte[] pri, byte[] pub) {
+	public ECDSAKey( byte[] pub,byte[] pri) {
 		KeyFactory kf;
 		try {
 			kf = KeyFactory.getInstance("EC");
@@ -58,8 +58,8 @@ public class ECDSAKey {
 	}
 	public static boolean verify(byte[] sig,byte[] data, byte[] pubKey) {
         try {
-    		Signature sigg = Signature.getInstance("SHA256withRSA");
-            sigg.initVerify(KeyFactory.getInstance("ECDSA").generatePublic(new X509EncodedKeySpec(pubKey)));
+    		Signature sigg = Signature.getInstance("SHA1withRSA");
+            sigg.initVerify(KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(pubKey)));
             sigg.update(data);
 			return sigg.verify(sig);
 		} catch (Exception e) {
