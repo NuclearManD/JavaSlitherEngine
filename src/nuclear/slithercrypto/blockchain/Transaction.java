@@ -4,13 +4,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-import nuclear.slithercrypto.RSAKey;
+import nuclear.slithercrypto.ECDSAKey;
+import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
 public class Transaction {
 
-	public static final int TRANSACTION_LENGTH = 2048;
+	public static final int TRANSACTION_LENGTH = 1024;
 	public static final byte TRANSACTION_ARBITRARY=0;
 	public static final byte TRANSACTION_SEND_COIN=1;
 	public static final byte TRANSACTION_SEND_GAS=2;
@@ -18,20 +19,22 @@ public class Transaction {
 	//public static final byte TRANSACTION_EXECUTE_PROGRAM=4;
 	//public static final byte TRANSACTION_STORE_MESSAGE=5;
 	public static final byte TRANSACTION_STORE_FILE=6;
+	private static final int KEY_LEN = 91;
+	private static final int SIG_LEN = 0;
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
 	public Transaction(byte[] packed) {
-		pubKey=Arrays.copyOfRange(packed, 0, 512);
-		descriptor=Arrays.copyOfRange(packed, 512, TRANSACTION_LENGTH-1);
+		pubKey=Arrays.copyOfRange(packed, 0, KEY_LEN);
+		descriptor=Arrays.copyOfRange(packed, KEY_LEN, TRANSACTION_LENGTH-1);
 		type=packed[TRANSACTION_LENGTH-1];
 	}
 	public Transaction(byte[] publicKey, byte[] descriptr, byte t) {
-		pubKey=Arrays.copyOf(publicKey, 512);
-		descriptor=Arrays.copyOf(descriptr, TRANSACTION_LENGTH-513);
+		pubKey=Arrays.copyOf(publicKey, KEY_LEN);
+		descriptor=Arrays.copyOf(descriptr, TRANSACTION_LENGTH-KEY_LEN-1);
 		type=t;
 	}
-	public static DaughterPair makeFile(byte[] publickey,byte[] program_data,byte[] lastBlockHash,String meta) {
+	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH-513];
 		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719472599999999797041181754915963019848010350114367943573666355803586560"),program_data);
 		int n=0;
@@ -40,6 +43,13 @@ public class Transaction {
 			n++;
 		}
 		for(byte i:meta.getBytes(StandardCharsets.UTF_8)) {
+			data[n]=i;
+			n++;
+		}
+		n=data.length-SIG_LEN;
+		ECDSAKey key=new ECDSAKey(publickey,priKey);
+		io.println(key.sign(data).length+"");
+		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
 			data[n]=i;
 			n++;
 		}
@@ -56,8 +66,9 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		RSAKey key=new RSAKey(sender,priKey);
-		for(byte i:Arrays.copyOf(key.sign(data),520)) {
+		n=data.length-SIG_LEN;
+		ECDSAKey key=new ECDSAKey(sender,priKey);
+		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
 			data[n]=i;
 			n++;
 		}
@@ -74,8 +85,9 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		RSAKey key=new RSAKey(sender,priKey);
-		for(byte i:Arrays.copyOf(key.sign(data),520)) {
+		n=data.length-SIG_LEN;
+		ECDSAKey key=new ECDSAKey(sender,priKey);
+		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
 			data[n]=i;
 			n++;
 		}
@@ -104,18 +116,20 @@ public class Transaction {
 		if(type==TRANSACTION_ARBITRARY) {
 			o+="Arbitrary";
 		}if(type==TRANSACTION_SEND_COIN) {
-			o+="Send "+(double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 512, 520))/1024+" Coins to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 512));
+			o+="Send "+(double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))/1024+" Coins to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
 		}if(type==TRANSACTION_SEND_GAS) {
-			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 512, 520))+" Gas to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 512));
+			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))+" Gas to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
 		/*}if(type==TRANSACTION_MAKE_PROGRAM) {
 			o+="Upload Program\n";
 			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));*/
+		}if(type==TRANSACTION_STORE_FILE) {
+			o+="Store File With Meta '"+Arrays.copyOfRange(descriptor, 32, descriptor.length-KEY_LEN)+"'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
 		}else
 			o+="Unknown Type";
-		o+="\n Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
+		o+="\n > Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
 		return o;
 	}
 	public boolean verify() {
-		
+		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-KEY_LEN), pubKey);
 	}
 }

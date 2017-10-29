@@ -6,16 +6,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class Crypt {
 	public static byte[] SHA256(String a) {
-		return a.getBytes(StandardCharsets.UTF_8);
+		return SHA256(a.getBytes(StandardCharsets.UTF_8));
 	}
 	public static byte[] SHA256(byte[] a) {
-		MessageDigest digest;
 		try {
-			digest = MessageDigest.getInstance("SHA-256");
+			return MessageDigest.getInstance("SHA-256").digest(a);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return digest.digest(a);
 	}
 }

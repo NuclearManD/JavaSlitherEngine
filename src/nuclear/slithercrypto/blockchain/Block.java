@@ -5,20 +5,22 @@ import java.util.Arrays;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
+import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
 public class Block {
-	public static final int HEADER_LENGTH = 660;
-	private byte[] hash;
-	private byte[] key;
-	private byte[] miner;
-	private byte[] lsblock;
-	private uint256_t difficulty;
-	private byte[] version;// 4 bytes
-	private long blockLen;
-	private byte[] data;
-	private long timestamp;
+	public static final int HEADER_LENGTH = 239;
+	private static final byte[] CURRENT_VERSION = {1,0,0,0};
+	private byte[] hash;			// 32 bytes
+	private byte[] key;				// 32 bytes
+	private byte[] miner;			// 91 bytes
+	private byte[] lsblock;			// 32 bytes
+	private uint256_t difficulty;	// 32 bytes
+	private byte[] version;			// 4 bytes
+	private long blockLen;			// 8 bytes
+	private long timestamp;			// 8 bytes
+	private byte[] data;			// ? bytes
 	private boolean valid=false;
 	/*
 	 *  Creates a Block from raw bytes
@@ -27,12 +29,12 @@ public class Block {
 	public Block(byte[] packed) {
 		hash=Arrays.copyOfRange(packed, 0, 32);
 		key=Arrays.copyOfRange(packed, 32, 64);
-		miner=Arrays.copyOfRange(packed, 64, 576);
-		lsblock=Arrays.copyOfRange(packed, 576, 608);
-		difficulty=new uint256_t(Arrays.copyOfRange(packed, 608, 640));
-		version=Arrays.copyOfRange(packed, 640, 644);
-		blockLen=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 644, 652));
-		timestamp=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 652, 660));
+		miner=Arrays.copyOfRange(packed, 64, 155);
+		lsblock=Arrays.copyOfRange(packed, 155, 187);
+		difficulty=new uint256_t(Arrays.copyOfRange(packed, 187, 219));
+		version=Arrays.copyOfRange(packed, 219, 223);
+		blockLen=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 223, 231));
+		timestamp=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 231, 239));
 		data=Arrays.copyOfRange(packed, HEADER_LENGTH, packed.length);
 	}
 	public Block(byte[] miner, byte[] lastblock, uint256_t diff, byte[] data) {
@@ -41,20 +43,23 @@ public class Block {
 		this.miner=miner;
 		lsblock=lastblock;
 		timestamp=System.currentTimeMillis() / 1000L;
+		key=new byte[32];
+		version=CURRENT_VERSION;
+		blockLen=HEADER_LENGTH+data.length;
 	}
 	/*
 	 *  Checks if the block is valid
 	 *  @return true if block is valid, otherwise false
 	 */
 	public boolean verify() {
-		byte[] packed=pack();
-		valid=Crypt.SHA256(Arrays.copyOfRange(packed,256/8,packed.length)).equals(hash);
+		byte[] packed=packNoHash();
+		valid=Crypt.SHA256(packed).equals(hash);
 		if(valid)
 			valid=difficulty.compareTo(new BigInteger(hash))>0;
 		return valid;
 	}
 	public byte[] pack() {
-		int length=5120/8+data.length;
+		int length=HEADER_LENGTH+data.length;
 		byte[] out = new byte[length];
 		int n=0;
 		for(byte i:hash) {
@@ -144,10 +149,55 @@ public class Block {
 		data=tmp;
 	}
 	public byte[] getHash() {
+		if(hash==null)
+			reHash();
 		return hash;
 	}
 	public void reHash() {
-		byte[] packed=pack();
-		hash=Crypt.SHA256(Arrays.copyOfRange(packed,256/8,packed.length));
+		byte[] packed=packNoHash();
+		hash=Crypt.SHA256(packed);
+	}
+	private byte[] packNoHash() {
+		int length=HEADER_LENGTH+data.length-32;
+		byte[] out = new byte[length];
+		int n=0;/*
+		io.println(""+key.length);
+		io.println(""+miner.length);
+		io.println(""+lsblock.length);
+		io.println(""+difficulty.littleEndian().length);
+		io.println(""+version.length);*/
+		for(byte i:key) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:miner) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:lsblock) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:difficulty.littleEndian()) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:version) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:SlitherS.longToBytes(blockLen)) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:SlitherS.longToBytes(timestamp)) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:data) {
+			out[n]=i;
+			n++;
+		}
+		return out;
 	}
 }
