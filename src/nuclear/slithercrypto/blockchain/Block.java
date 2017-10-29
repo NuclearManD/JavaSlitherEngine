@@ -9,7 +9,7 @@ import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
 public class Block {
-	public static final int HEADER_LENGTH = 652;
+	public static final int HEADER_LENGTH = 660;
 	private byte[] hash;
 	private byte[] key;
 	private byte[] miner;
@@ -18,6 +18,7 @@ public class Block {
 	private byte[] version;// 4 bytes
 	private long blockLen;
 	private byte[] data;
+	private long timestamp;
 	private boolean valid=false;
 	/*
 	 *  Creates a Block from raw bytes
@@ -31,7 +32,15 @@ public class Block {
 		difficulty=new uint256_t(Arrays.copyOfRange(packed, 608, 640));
 		version=Arrays.copyOfRange(packed, 640, 644);
 		blockLen=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 644, 652));
-		data=Arrays.copyOfRange(packed, 652, packed.length);
+		timestamp=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 652, 660));
+		data=Arrays.copyOfRange(packed, HEADER_LENGTH, packed.length);
+	}
+	public Block(byte[] miner, byte[] lastblock, uint256_t diff, byte[] data) {
+		this.data=data;
+		difficulty=diff;
+		this.miner=miner;
+		lsblock=lastblock;
+		timestamp=System.currentTimeMillis() / 1000L;
 	}
 	/*
 	 *  Checks if the block is valid
@@ -73,6 +82,10 @@ public class Block {
 			n++;
 		}
 		for(byte i:SlitherS.longToBytes(blockLen)) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:SlitherS.longToBytes(timestamp)) {
 			out[n]=i;
 			n++;
 		}
@@ -129,5 +142,12 @@ public class Block {
 			tmp[i+index]=packed[i];
 		}
 		data=tmp;
+	}
+	public byte[] getHash() {
+		return hash;
+	}
+	public void reHash() {
+		byte[] packed=pack();
+		hash=Crypt.SHA256(Arrays.copyOfRange(packed,256/8,packed.length));
 	}
 }
