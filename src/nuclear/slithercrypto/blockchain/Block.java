@@ -1,11 +1,9 @@
 package nuclear.slithercrypto.blockchain;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
-import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
@@ -163,12 +161,7 @@ public class Block {
 	private byte[] packNoHash() {
 		int length=HEADER_LENGTH+data.length-32;
 		byte[] out = new byte[length];
-		int n=0;/*
-		io.println(""+key.length);
-		io.println(""+miner.length);
-		io.println(""+lsblock.length);
-		io.println(""+difficulty.littleEndian().length);
-		io.println(""+version.length);*/
+		int n=0;
 		for(byte i:key) {
 			out[n]=i;
 			n++;

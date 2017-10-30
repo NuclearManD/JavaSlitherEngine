@@ -47,7 +47,8 @@ public class ECDSAKey {
 			sig = Signature.getInstance("SHA1WithECDSA");
 	        sig.initSign(key.getPrivate());
 	        sig.update(data);
-			return sig.sign();
+	        byte[] der=sig.sign();
+			return 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
