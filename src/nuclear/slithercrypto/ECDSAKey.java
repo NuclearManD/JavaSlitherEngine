@@ -57,9 +57,11 @@ public class ECDSAKey {
 		return sign(data.getBytes(StandardCharsets.UTF_8));
 	}
 	public static boolean verify(byte[] sig,byte[] data, byte[] pubKey) {
+		KeyFactory kf;
         try {
-    		Signature sigg = Signature.getInstance("SHA1withRSA");
-            sigg.initVerify(KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(pubKey)));
+			kf = KeyFactory.getInstance("EC");
+    		Signature sigg = Signature.getInstance("SHA1withECDSA");
+            sigg.initVerify(kf.generatePublic(new X509EncodedKeySpec(pubKey)));
             sigg.update(data);
 			return sigg.verify(sig);
 		} catch (Exception e) {

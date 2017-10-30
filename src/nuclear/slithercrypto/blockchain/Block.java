@@ -22,6 +22,7 @@ public class Block {
 	private long timestamp;			// 8 bytes
 	private byte[] data;			// ? bytes
 	private boolean valid=false;
+	Random r=new Random();
 	/*
 	 *  Creates a Block from raw bytes
 	 *  @param packed bytes to be unpacked
@@ -55,7 +56,7 @@ public class Block {
 		byte[] packed=packNoHash();
 		valid=Crypt.SHA256(packed).equals(hash);
 		if(valid)
-			valid=difficulty.compareTo(new BigInteger(hash))>0;
+			valid=difficulty.compareTo(new uint256_t(hash))>0;
 		return valid;
 	}
 	public byte[] pack() {
@@ -103,8 +104,10 @@ public class Block {
 	public boolean mineOnce(byte[] publicKey) {
 		if(!valid) {
 			miner=publicKey;
-			new Random().nextBytes(key);
-			return verify();
+			r.nextBytes(key);
+			reHash();
+			valid=difficulty.compareTo(new uint256_t(hash))>0;
+			return valid;
 		}
 		return true;
 	}

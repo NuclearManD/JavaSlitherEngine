@@ -20,7 +20,7 @@ public class Transaction {
 	//public static final byte TRANSACTION_STORE_MESSAGE=5;
 	public static final byte TRANSACTION_STORE_FILE=6;
 	private static final int KEY_LEN = 91;
-	private static final int SIG_LEN = 0;
+	private static final int SIG_LEN = 75;
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
@@ -36,7 +36,17 @@ public class Transaction {
 	}
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH-513];
-		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719472599999999797041181754915963019848010350114367943573666355803586560"),program_data);
+		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),program_data);
+		long hashes=0;
+		long mil=System.currentTimeMillis();
+		while(!tmp.mineOnce(publickey)) {
+			hashes++;
+			if(System.currentTimeMillis()-mil>3000) {
+				io.println(hashes/(System.currentTimeMillis()-mil)+" KH/s...");
+				hashes=0;
+				mil=System.currentTimeMillis();
+			}
+		}
 		int n=0;
 		for(byte i:tmp.getHash()) {
 			data[n]=i;
@@ -48,8 +58,9 @@ public class Transaction {
 		}
 		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(publickey,priKey);
-		io.println(key.sign(data).length+"");
-		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
+		byte[] sig=key.sign(data);
+		io.println(sig.length+"");
+		for(byte i:sig) {
 			data[n]=i;
 			n++;
 		}
@@ -68,7 +79,7 @@ public class Transaction {
 		}
 		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(sender,priKey);
-		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
+		for(byte i:key.sign(data)) {
 			data[n]=i;
 			n++;
 		}
@@ -87,7 +98,7 @@ public class Transaction {
 		}
 		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(sender,priKey);
-		for(byte i:Arrays.copyOf(key.sign(data),SIG_LEN)) {
+		for(byte i:key.sign(data)) {
 			data[n]=i;
 			n++;
 		}
@@ -124,7 +135,7 @@ public class Transaction {
 			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));*/
 		}if(type==TRANSACTION_STORE_FILE) {
 			o+="Store File With Meta '"+new String(Arrays.copyOfRange(descriptor, 32, descriptor.length-KEY_LEN),StandardCharsets.UTF_8);
-			o+="'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
+			o=o+"'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
 		}else
 			o+="Unknown Type";
 		o+="\n > Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
