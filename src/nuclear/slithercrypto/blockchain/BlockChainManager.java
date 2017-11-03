@@ -23,8 +23,8 @@ public class BlockChainManager {
 		for(Block block:blocks) {
 			for(int i=0;i<block.numTransactions();i++) {
 				Transaction t=block.getTransaction(i);
-				io.println(t.toString());
-				if(t.type==Transaction.TRANSACTION_STORE_FILE&&t.pubKey.equals(pubAdr)&&new String(t.getMeta(),StandardCharsets.UTF_8).equals(meta))
+				String tmeta=new String(t.getMeta(),StandardCharsets.UTF_8);
+				if(t.type==Transaction.TRANSACTION_STORE_FILE&&Arrays.equals(t.pubKey, pubAdr)&&tmeta.equals(meta))
 					return getDaughter(Arrays.copyOf(t.descriptor,32)).getData();
 			}
 		}
@@ -32,7 +32,7 @@ public class BlockChainManager {
 	}
 	public Block getDaughter(byte[] hash) {
 		for(Block i:daughters) {
-			if(i.getHash().equals(hash))return i;
+			if(Arrays.equals(i.getHash(),hash))return i;
 		}
 		return null;
 	}

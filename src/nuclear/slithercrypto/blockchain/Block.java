@@ -1,6 +1,7 @@
 package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
@@ -11,6 +12,7 @@ import nuclear.slitherio.uint256_t;
 public class Block {
 	public static final int HEADER_LENGTH = 239;
 	private static final byte[] CURRENT_VERSION = {1,0,0,0};
+	public static final int TRANSACTION_LIMIT = 64;
 	private byte[] hash;			// 32 bytes
 	private byte[] key;				// 32 bytes
 	private byte[] miner;			// 91 bytes
@@ -63,108 +65,20 @@ public class Block {
 	 */
 	public boolean verify() {
 		byte[] packed=packNoHash();
-		valid=Crypt.SHA256(packed).equals(hash);
+		valid=Arrays.equals(Crypt.SHA256(packed),hash);
 		if(valid)
 			valid=difficulty.compareTo(new uint256_t(hash))>0;
 		return valid;
-	}
-	public byte[] pack() {
-		int length=HEADER_LENGTH+data.length;
-		byte[] out = new byte[length];
-		int n=0;
-		for(byte i:hash) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:key) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:miner) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:lsblock) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:difficulty.littleEndian()) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:version) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:SlitherS.longToBytes(blockLen)) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:SlitherS.longToBytes(timestamp)) {
-			out[n]=i;
-			n++;
-		}
-		for(byte i:data) {
-			out[n]=i;
-			n++;
-		}
-		return out;
 	}
 	public boolean mineOnce(byte[] publicKey) {
 		if(!valid) {
 			miner=publicKey;
 			r.nextBytes(key);
+			timestamp=System.currentTimeMillis() / 1000L;
 			reHash();
-			valid=difficulty.compareTo(new uint256_t(hash))>0;
-			return valid;
+			return verify();
 		}
 		return true;
-	}
-	public byte[] getData() {
-		return data;
-	}
-	public void setData(byte[] data) {
-		this.data=data;
-		valid=false;
-		blockLen=HEADER_LENGTH+data.length;
-	}
-	public void setDifficulty(byte[] data) {
-		this.difficulty=new uint256_t(data);
-		valid=false;
-	}
-	public uint256_t getDifficulty() {
-		return difficulty;
-	}
-	public byte[] getVersion() {
-		return version;
-	}
-	public boolean isComplete() {
-		byte[] packed=pack();
-		return blockLen==packed.length;
-	}
-	public Transaction getTransaction(int index){
-		index=index*Transaction.PACKED_LEN;
-		if(index>data.length)
-			return null;
-		return new Transaction(Arrays.copyOfRange(data,index,index+Transaction.PACKED_LEN));
-	}
-	public void addTransaction(Transaction t){
-		int index=data.length;
-		byte[] tmp=new byte[index+Transaction.PACKED_LEN];
-		for(int i=0;i<data.length;i++) {
-			tmp[i]=data[i];
-		}
-		byte[] packed=t.pack();
-		io.println(t.toString());
-		for(int i=0;i<Transaction.PACKED_LEN;i++) {
-			tmp[i+index]=packed[i];
-		}
-		data=tmp;
-	}
-	public byte[] getHash() {
-		if(hash==null)
-			reHash();
-		return hash;
 	}
 	public void reHash() {
 		byte[] packed=packNoHash();
@@ -208,7 +122,113 @@ public class Block {
 		}
 		return out;
 	}
+	public byte[] pack() {
+		int length=HEADER_LENGTH+data.length;
+		byte[] out = new byte[length];
+		int n=0;
+		for(byte i:hash) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:key) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:miner) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:lsblock) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:difficulty.littleEndian()) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:version) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:SlitherS.longToBytes(blockLen)) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:SlitherS.longToBytes(timestamp)) {
+			out[n]=i;
+			n++;
+		}
+		for(byte i:data) {
+			out[n]=i;
+			n++;
+		}
+		return out;
+	}
+	public byte[] getData() {
+		return data;
+	}
+	public void setData(byte[] data) {
+		this.data=data;
+		valid=false;
+		blockLen=HEADER_LENGTH+data.length;
+	}
+	public void setDifficulty(byte[] data) {
+		this.difficulty=new uint256_t(data);
+		valid=false;
+	}
+	public uint256_t getDifficulty() {
+		return difficulty;
+	}
+	public byte[] getVersion() {
+		return version;
+	}
+	public boolean isComplete() {
+		byte[] packed=pack();
+		return blockLen==packed.length;
+	}
+	public Transaction getTransaction(int index){
+		index=index*Transaction.PACKED_LEN;
+		if(index>data.length)
+			return null;
+		return new Transaction(Arrays.copyOfRange(data,index,index+Transaction.PACKED_LEN));
+	}
+	public void addTransaction(Transaction t){
+		int index=data.length;
+		byte[] tmp=new byte[index+Transaction.PACKED_LEN];
+		for(int i=0;i<data.length;i++) {
+			tmp[i]=data[i];
+		}
+		byte[] packed=t.pack();
+		for(int i=0;i<Transaction.PACKED_LEN;i++) {
+			tmp[i+index]=packed[i];
+		}
+		data=tmp;
+	}
+	public byte[] getHash() {
+		if(hash==null)
+			reHash();
+		return hash;
+	}
 	public int numTransactions() {
 		return data.length/Transaction.PACKED_LEN;
+	}
+	public String toString(){
+		return "Block:"+
+				"\n  StoredHash="+Base64.getEncoder().encodeToString(hash)+
+				"\n  actualHash="+Base64.getEncoder().encodeToString(Crypt.SHA256(packNoHash()))+
+				"\n  dataLength="+data.length+
+				"\n  valid   =  "+verify();
+	}
+	public void CPUmine(byte[] pubKey) {
+		long hashes=0;
+		long mil=System.currentTimeMillis();
+		while(!mineOnce(pubKey)) {
+			hashes++;
+			if(System.currentTimeMillis()-mil>3000) {
+				io.println(hashes/(System.currentTimeMillis()-mil)+" KH/s...");
+				hashes=0;
+				mil=System.currentTimeMillis();
+			}
+		}
 	}
 }

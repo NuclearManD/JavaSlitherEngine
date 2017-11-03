@@ -11,7 +11,7 @@ public class BlockChainManagerTest {
 
 	public static void main(String[] args) {
 		ECDSAKey key=new ECDSAKey();
-		Block genesis=new Block(new byte[32],new byte[32],new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
+		Block genesis=new Block(new byte[32],new byte[32],new uint256_t("2315841784746324097914350074143783609629524485720183718758238994082824192"),new byte[0]);
 		long hashes=0;
 		long mil=System.currentTimeMillis();
 		while(!genesis.mineOnce(key.getPublicKey())) {

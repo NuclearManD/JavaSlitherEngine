@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import nuclear.slitherge.top.io;
+
 public abstract class Server implements Runnable{
 	protected Thread serverThread;
 	protected ServerSocket sok;
@@ -36,18 +38,23 @@ public abstract class Server implements Runnable{
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
 		long length=is.readLong();
+		io.println("Length: "+length);
 		byte in[]=new byte[(int)length];
 		int i=0;
 		while(length>i&&is.available()>0) {
 			in[i]=is.readByte();
 			i++;
 		}
-		String o=easyServe(new String(in,StandardCharsets.UTF_8));
-		os.writeLong(o.length());
-		os.write(o.getBytes(StandardCharsets.UTF_8));
+		byte[] o=easyServe(in);
+		io.println("sending "+o.length+" byte reply...");
+		os.writeLong(o.length);
+		os.write(o);
 		os.close();
 		is.close();
 		client.close();
+	}
+	protected byte[] easyServe(byte[] in) {
+		return easyServe(new String(in,StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
 	}
 	protected String easyServe(String in) {
 		return "SlitherError";

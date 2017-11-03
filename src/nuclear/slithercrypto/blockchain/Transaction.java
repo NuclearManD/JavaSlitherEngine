@@ -26,9 +26,9 @@ public class Transaction {
 	public byte[] descriptor;
 	public byte type;
 	public Transaction(byte[] packed) {
-		pubKey=Arrays.copyOfRange(packed, 0, KEY_LEN);
-		descriptor=Arrays.copyOfRange(packed, KEY_LEN, TRANSACTION_LENGTH-1);
-		type=packed[TRANSACTION_LENGTH-1];
+		pubKey=Arrays.copyOf(packed, KEY_LEN);
+		descriptor=Arrays.copyOfRange(packed, KEY_LEN, PACKED_LEN-1);
+		type=packed[PACKED_LEN-1];
 	}
 	public Transaction(byte[] publicKey, byte[] descriptr, byte t) {
 		pubKey=Arrays.copyOf(publicKey, KEY_LEN);
@@ -53,18 +53,15 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		n=32;
-		for(byte i:meta.getBytes(StandardCharsets.UTF_8)) {
-			data[n]=i;
-			n++;
-		}
+		Transaction trans=new Transaction(publickey,data,TRANSACTION_STORE_FILE);
+		trans.setMeta(meta.getBytes(StandardCharsets.UTF_8));
 		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(publickey,priKey);
 		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
 		for(byte i=0;i<sig.length;i++) {
 			data[i+TRANSACTION_LENGTH-SIG_LEN]=sig[i];
 		}
-		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_FILE),tmp);
+		return new DaughterPair(trans,tmp);
 	}
 	public static Transaction sendGas(byte[] sender, byte[] receiver, byte[] priKey,int amount) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
@@ -114,6 +111,7 @@ public class Transaction {
 			out[n]=i;
 			n++;
 		}
+		n=KEY_LEN;
 		for(byte i:descriptor) {
 			out[n]=i;
 			n++;
@@ -123,6 +121,20 @@ public class Transaction {
 	}
 	public byte[] getSender() {
 		return pubKey;
+	}
+	public boolean verify() {
+		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-SIG_LEN), pubKey);
+	}
+	public byte[] getMeta() {
+		return Arrays.copyOfRange(descriptor, 33, 33+descriptor[32]);
+	}
+	public void setMeta(byte[] meta){
+		descriptor[32]=(byte) meta.length;
+		int n=33;
+		for(byte i:meta){
+			descriptor[n]=i;
+			n++;
+		}
 	}
 	public String toString() {
 		String o="Transaction: ";
@@ -143,11 +155,5 @@ public class Transaction {
 			o+="Unknown Type";
 		o+="\n > Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
 		return o;
-	}
-	public boolean verify() {
-		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-SIG_LEN), pubKey);
-	}
-	public byte[] getMeta() {
-		return Arrays.copyOfRange(descriptor, 32, descriptor.length-SIG_LEN);
 	}
 }
