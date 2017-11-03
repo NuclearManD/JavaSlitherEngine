@@ -21,6 +21,7 @@ public class Transaction {
 	public static final byte TRANSACTION_STORE_FILE=6;
 	private static final int KEY_LEN = 91;
 	private static final int SIG_LEN = 74;
+	public static final int PACKED_LEN = 1057;//1024 + 32(256 bytes) + 1
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
