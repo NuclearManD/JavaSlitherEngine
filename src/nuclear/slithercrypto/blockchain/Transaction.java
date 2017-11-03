@@ -21,7 +21,7 @@ public class Transaction {
 	public static final byte TRANSACTION_STORE_FILE=6;
 	private static final int KEY_LEN = 91;
 	private static final int SIG_LEN = 74;
-	public static final int PACKED_LEN = 1057;//1024 + 32(256 bytes) + 1
+	public static final int PACKED_LEN = 1116;//1024(data) + 91(key) + 1(type)
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
@@ -108,7 +108,7 @@ public class Transaction {
 	}
 
 	public byte[] pack() {
-		byte[] out = new byte[TRANSACTION_LENGTH];
+		byte[] out = new byte[PACKED_LEN];
 		int n=0;
 		for(byte i:pubKey) {
 			out[n]=i;
@@ -118,7 +118,7 @@ public class Transaction {
 			out[n]=i;
 			n++;
 		}
-		out[TRANSACTION_LENGTH-1]=type;
+		out[PACKED_LEN-1]=type;
 		return out;
 	}
 	public byte[] getSender() {
@@ -128,15 +128,16 @@ public class Transaction {
 		String o="Transaction: ";
 		if(type==TRANSACTION_ARBITRARY) {
 			o+="Arbitrary";
-		}if(type==TRANSACTION_SEND_COIN) {
+		}else if(type==TRANSACTION_SEND_COIN) {
 			o+="Send "+(double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))/1024+" Coins to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
-		}if(type==TRANSACTION_SEND_GAS) {
+		}else if(type==TRANSACTION_SEND_GAS) {
 			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))+" Gas to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
 		/*}if(type==TRANSACTION_MAKE_PROGRAM) {
 			o+="Upload Program\n";
 			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));*/
-		}if(type==TRANSACTION_STORE_FILE) {
-			o+="Store File With Meta '"+new String(Arrays.copyOfRange(descriptor, 32, descriptor.length-SIG_LEN),StandardCharsets.UTF_8);
+		}else if(type==TRANSACTION_STORE_FILE) {
+			o+="Store File With Meta '";
+			o+=new String(getMeta(),StandardCharsets.UTF_8)+"";
 			o+="'; Daughter has hash "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));
 		}else
 			o+="Unknown Type";
@@ -145,5 +146,8 @@ public class Transaction {
 	}
 	public boolean verify() {
 		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-SIG_LEN), pubKey);
+	}
+	public byte[] getMeta() {
+		return Arrays.copyOfRange(descriptor, 32, descriptor.length-SIG_LEN);
 	}
 }

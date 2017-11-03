@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
+import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
@@ -40,6 +41,16 @@ public class Block {
 		this.data=data;
 		difficulty=diff;
 		this.miner=miner;
+		lsblock=lastblock;
+		timestamp=System.currentTimeMillis() / 1000L;
+		key=new byte[32];
+		version=CURRENT_VERSION;
+		blockLen=HEADER_LENGTH+data.length;
+	}
+	public Block(byte[] lastblock, uint256_t diff, byte[] data) {
+		this.data=data;
+		difficulty=diff;
+		this.miner=new byte[91];
 		lsblock=lastblock;
 		timestamp=System.currentTimeMillis() / 1000L;
 		key=new byte[32];
@@ -131,20 +142,21 @@ public class Block {
 		byte[] packed=pack();
 		return blockLen==packed.length;
 	}
-	public Transaction getTransaction(int index) throws TransactionIndexError{
-		index=index*Transaction.TRANSACTION_LENGTH;
+	public Transaction getTransaction(int index){
+		index=index*Transaction.PACKED_LEN;
 		if(index>data.length)
-			throw new TransactionIndexError("Transaction Out Of Bounds.");
-		return new Transaction(Arrays.copyOfRange(data,index,index+Transaction.TRANSACTION_LENGTH));
+			return null;
+		return new Transaction(Arrays.copyOfRange(data,index,index+Transaction.PACKED_LEN));
 	}
 	public void addTransaction(Transaction t){
 		int index=data.length;
-		byte[] tmp=new byte[index+Transaction.TRANSACTION_LENGTH];
+		byte[] tmp=new byte[index+Transaction.PACKED_LEN];
 		for(int i=0;i<data.length;i++) {
 			tmp[i]=data[i];
 		}
 		byte[] packed=t.pack();
-		for(int i=0;i<Transaction.TRANSACTION_LENGTH;i++) {
+		io.println(t.toString());
+		for(int i=0;i<Transaction.PACKED_LEN;i++) {
 			tmp[i+index]=packed[i];
 		}
 		data=tmp;
@@ -195,5 +207,8 @@ public class Block {
 			n++;
 		}
 		return out;
+	}
+	public int numTransactions() {
+		return data.length/Transaction.PACKED_LEN;
 	}
 }
