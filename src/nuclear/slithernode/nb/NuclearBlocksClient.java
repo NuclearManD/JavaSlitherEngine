@@ -18,12 +18,18 @@ public class NuclearBlocksClient{
 		byte[] lshash;
 		io.println("Making pair...");
 		try {
-			lshash=Client.ezPoll(1152, "LSHASH", "localhost").getBytes(StandardCharsets.UTF_8);
+			String resp=Client.ezPoll(1152, "LSHASH", "localhost");
+			if(resp=="CNFE"){
+				io.println("Server did not recognise 'LSHASH'!");
+				return;
+			}
+			lshash=resp.getBytes(StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
 		DaughterPair pair=Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), data.getBytes(StandardCharsets.UTF_8), lshash, "~~~");
+		io.println("made pair...");
 		String out;
 		try {
 			out=Client.ezPoll(1152, "ADPAIR"+new String(pair.serialize(),StandardCharsets.UTF_8), "localhost");

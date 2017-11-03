@@ -54,13 +54,17 @@ public class Node extends Server {
 				daughters.add(pair.block);
 			}
 		}else if(cmd.equals("LSHASH")){
+			io.println("Sending last hash: "+lastBlock().getHash().length);
 			return lastBlock().getHash();
+		}else {
+			out="CNFE";
 		}
 		checkup();
+		io.println("Sending resp:"+out);
 		return out.getBytes(StandardCharsets.UTF_8);
 	}
 	private Block lastBlock() {
-		return blocks.get(blocks.size());
+		return blocks.get(blocks.size()-1);
 	}
 	private void checkup() {
 		if(current.numTransactions()>=Block.TRANSACTION_LIMIT)

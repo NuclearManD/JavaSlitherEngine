@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import nuclear.slitherge.top.io;
 
+@SuppressWarnings("unused")
 public abstract class Server implements Runnable{
 	protected Thread serverThread;
 	protected ServerSocket sok;
@@ -38,7 +39,6 @@ public abstract class Server implements Runnable{
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
 		long length=is.readLong();
-		io.println("Length: "+length);
 		byte in[]=new byte[(int)length];
 		int i=0;
 		while(length>i&&is.available()>0) {
@@ -46,7 +46,6 @@ public abstract class Server implements Runnable{
 			i++;
 		}
 		byte[] o=easyServe(in);
-		io.println("sending "+o.length+" byte reply...");
 		os.writeLong(o.length);
 		os.write(o);
 		os.close();

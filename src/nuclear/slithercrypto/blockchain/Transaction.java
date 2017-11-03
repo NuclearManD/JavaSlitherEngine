@@ -38,16 +38,7 @@ public class Transaction {
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
 		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),program_data);
-		long hashes=0;
-		long mil=System.currentTimeMillis();
-		while(!tmp.mineOnce(publickey)) {
-			hashes++;
-			if(System.currentTimeMillis()-mil>3000) {
-				io.println(hashes/(System.currentTimeMillis()-mil)+" KH/s...");
-				hashes=0;
-				mil=System.currentTimeMillis();
-			}
-		}
+		tmp.CPUmine(publickey);
 		int n=0;
 		for(byte i:tmp.getHash()) {
 			data[n]=i;
