@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 public class ECDSAKey {
 	/*
@@ -48,7 +49,9 @@ public class ECDSAKey {
 	        sig.initSign(key.getPrivate());
 	        sig.update(data);
 	        byte[] der=sig.sign();
-			return 
+	        byte[] out=Arrays.copyOf(der, 74);
+	        out[73]=(byte)der.length;
+			return out;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -64,6 +67,7 @@ public class ECDSAKey {
     		Signature sigg = Signature.getInstance("SHA1withECDSA");
             sigg.initVerify(kf.generatePublic(new X509EncodedKeySpec(pubKey)));
             sigg.update(data);
+            sig=Arrays.copyOf(sig, sig[73]);
 			return sigg.verify(sig);
 		} catch (Exception e) {
 			e.printStackTrace();
