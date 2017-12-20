@@ -1,7 +1,6 @@
 package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
@@ -212,11 +211,12 @@ public class Block {
 		return data.length/Transaction.PACKED_LEN;
 	}
 	public String toString(){
-		return "Block:"+
+		return /*"Block:"+
 				"\n  StoredHash="+Base64.getEncoder().encodeToString(hash)+
 				"\n  actualHash="+Base64.getEncoder().encodeToString(Crypt.SHA256(packNoHash()))+
 				"\n  dataLength="+data.length+
-				"\n  valid   =  "+verify();
+				"\n  data="+new String(data,StandardCharsets.UTF_8)+
+				"\n  valid   =  "+verify();*/""+(blockLen);
 	}
 	public void CPUmine(byte[] pubKey) {
 		long hashes=0;

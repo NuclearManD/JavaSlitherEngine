@@ -37,7 +37,7 @@ public class Transaction {
 	}
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
-		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719472615821079628110333679920368336826869405186543784860581888"),program_data);
+		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719476158210796281103336799203683368268694"/*05186543784860581888"*/),program_data);
 		tmp.CPUmine(publickey);
 		int n=0;
 		for(byte i:tmp.getHash()) {
