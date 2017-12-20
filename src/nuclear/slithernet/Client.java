@@ -18,12 +18,9 @@ public class Client {
 		outStream=new DataOutputStream(socket.getOutputStream());
 	}
 	public static String ezPoll(int port, String in,String host) throws IOException {
-		return new String(bytePoll(port,in.getBytes(StandardCharsets.UTF_8),host),StandardCharsets.UTF_8);
-	}
-	public static byte[] bytePoll(int port, byte[] in, String host) throws IOException{
 		Client tmp=new Client(port,host);
-		tmp.outStream.writeLong(in.length);
-		tmp.outStream.write(in);
+		tmp.outStream.writeLong(in.length());
+		tmp.outStream.write(in.getBytes(StandardCharsets.UTF_8));
 		long len=tmp.inStream.readLong();
 		byte out[]=new byte[(int)len];
 		int i=0;
@@ -31,6 +28,6 @@ public class Client {
 			out[i]=tmp.inStream.readByte();
 			i++;
 		}
-		return out;
+		return new String(out,StandardCharsets.UTF_8);
 	}
 }

@@ -3,10 +3,10 @@ package nuclear.slitherge.top;
 import java.util.ArrayList;
 
 public class Dimension {
-	private ArrayList<Entity> entities= new ArrayList<Entity>();
-	private ArrayList<Thing> things= new ArrayList<Thing>();
-	public String name="in the unknown";
-	private int id=-1;
+	protected ArrayList<Entity> entities= new ArrayList<Entity>();
+	protected ArrayList<Thing> things= new ArrayList<Thing>();
+	private String name="in the unknown";
+	protected int id=-1;
 	public Dimension(String n) {
 		name=n;
 	}
@@ -32,7 +32,9 @@ public class Dimension {
 		for(int x=0;x<things.size();x++){
 			things.get(x).update();
 		}
+		safeUpdate();
 	}
+	protected void safeUpdate(){}
 	public void insertObject(Thing w) {
 		things.add(w);
 	}
@@ -128,5 +130,14 @@ public class Dimension {
 	}
 	public String toString(){
 		return "Dimension '"+name+"'";
+	}
+	public String getName(Entity e){
+		return name;
+	}
+	public String getName(){
+		return name;
+	}
+	public void setName(String n){
+		name=n;
 	}
 }

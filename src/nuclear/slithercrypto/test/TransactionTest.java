@@ -17,7 +17,6 @@ public class TransactionTest {
 		io.println("Transaction:\t"+pair.tr.toString());
 		io.println("Daughter:\t\t"+pair.block.toString());
 		io.println("Valid: "+pair.tr.verify());
-		key.prnt(key.getPrivateKey());
 	}
 
 }

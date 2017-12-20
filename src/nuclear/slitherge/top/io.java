@@ -33,4 +33,11 @@ public class io {
 	public static void println() {
 		System.out.println();
 	}
+	public static void println(int a) {
+		System.out.println(a);
+		
+	}
+	public static void print(char i) {
+		System.out.print(i);
+	}
 }

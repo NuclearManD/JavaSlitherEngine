@@ -37,7 +37,7 @@ public class Transaction {
 	}
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
-		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719476158210796281103336799203683368268694"/*05186543784860581888"*/),program_data);
+		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),program_data);
 		tmp.CPUmine(publickey);
 		int n=0;
 		for(byte i:tmp.getHash()) {
@@ -46,10 +46,11 @@ public class Transaction {
 		}
 		Transaction trans=new Transaction(publickey,data,TRANSACTION_STORE_FILE);
 		trans.setMeta(meta.getBytes(StandardCharsets.UTF_8));
+		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(publickey,priKey);
-		byte[] sig=key.sign(Arrays.copyOf(trans.descriptor, TRANSACTION_LENGTH-SIG_LEN));
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
 		for(byte i=0;i<sig.length;i++) {
-			trans.descriptor[i+TRANSACTION_LENGTH-SIG_LEN]=sig[i];
+			data[i+TRANSACTION_LENGTH-SIG_LEN]=sig[i];
 		}
 		return new DaughterPair(trans,tmp);
 	}
@@ -64,9 +65,9 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		n=TRANSACTION_LENGTH-SIG_LEN;
+		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(sender,priKey);
-		byte[] sig=key.sign(Arrays.copyOf(data, n));
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
 		for(byte i:sig) {
 			data[n]=i;
 			n++;
@@ -84,9 +85,9 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		n=TRANSACTION_LENGTH-SIG_LEN;
+		n=data.length-SIG_LEN;
 		ECDSAKey key=new ECDSAKey(sender,priKey);
-		byte[] sig=key.sign(Arrays.copyOf(data, n));
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
 		for(byte i:sig) {
 			data[n]=i;
 			n++;
@@ -113,7 +114,6 @@ public class Transaction {
 		return pubKey;
 	}
 	public boolean verify() {
-		io.println(Base64.getEncoder().encodeToString(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length)));
 		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-SIG_LEN), pubKey);
 	}
 	public byte[] getMeta() {

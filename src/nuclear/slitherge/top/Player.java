@@ -4,6 +4,7 @@ public class Player extends Entity {
 
 	public Player(int dimt,double xc, double yc) {
 		super(dimt,xc, yc);
+		range=10;
 	}
 	@Override
 	public void update() {
@@ -98,7 +99,7 @@ public class Player extends Entity {
 	}
 	void lookP(){
 		Dimension dim=Universe.dimensions.get(dimension);
-		io.println("You are "+dim.name+" at coordinates "+x+", "+y);
+		io.println("You are "+dim.getName(this)+" at coordinates "+x+", "+y);
 		io.println(look());
 	}
 }
