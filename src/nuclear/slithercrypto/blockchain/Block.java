@@ -66,8 +66,7 @@ public class Block {
 	public boolean verify() {
 		byte[] packed=packNoHash();
 		valid=Arrays.equals(Crypt.SHA256(packed),hash);
-		if(valid)
-			valid=difficulty.compareTo(new uint256_t(hash))>0;
+		valid=valid&&difficulty.compareTo(new uint256_t(hash))>0;
 		return valid;
 	}
 	public boolean mineOnce(byte[] publicKey) {

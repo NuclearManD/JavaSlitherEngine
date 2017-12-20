@@ -18,26 +18,43 @@ public class NuclearBlocksClient{
 		byte[] lshash;
 		io.println("Making pair...");
 		try {
-			String resp=Client.ezPoll(1152, "LSHASH", "localhost");
-			if(resp=="CNFE"){
+			byte[] resp=Client.bytePoll(1152, "LSHASH".getBytes(StandardCharsets.UTF_8), "localhost");
+			if(new String(resp,StandardCharsets.UTF_8).equals("CNFE")){
 				io.println("Server did not recognise 'LSHASH'!");
 				return;
-			}
-			lshash=resp.getBytes(StandardCharsets.UTF_8);
+			}else if(resp.length!=32)
+				io.println("Warn: "+resp.length+" byte hash.");
+			lshash=resp;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
 		DaughterPair pair=Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), data.getBytes(StandardCharsets.UTF_8), lshash, "~~~");
+		if(!pair.verify()) {
+			io.println("Error: invalid pair!");
+			return;
+		}
 		io.println("made pair...");
-		String out;
+		byte[] out;
 		try {
-			out=Client.ezPoll(1152, "ADPAIR"+new String(pair.serialize(),StandardCharsets.UTF_8), "localhost");
+			byte[] serial=pair.serialize();
+			byte[] command=new byte[serial.length+6];
+			int n=0;
+			for(byte i:"ADPAIR".getBytes(StandardCharsets.UTF_8)) {
+				command[n]=i;
+				n++;
+			}
+			n=6;
+			for(byte i:serial) {
+				command[n]=i;
+				n++;
+			}
+			out=Client.bytePoll(1152, command, "localhost");
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		if(out.equals("OK"))
+		if(new String(out,StandardCharsets.UTF_8).equals("OK"))
 			io.println("uploaded!");
 		else
 			io.println("Server Error!");
