@@ -35,7 +35,7 @@ public class Transaction {
 		descriptor=Arrays.copyOf(descriptr, TRANSACTION_LENGTH);
 		type=t;
 	}
-	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta, boolean mine) {
+	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
 		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("7719472615821079628110333679920368336826869405186543784860581888"),program_data);
 		tmp.CPUmine(publickey);
@@ -52,9 +52,6 @@ public class Transaction {
 			trans.descriptor[i+TRANSACTION_LENGTH-SIG_LEN]=sig[i];
 		}
 		return new DaughterPair(trans,tmp);
-	}
-	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
-		return makeFile(publickey,priKey,program_data, lastBlockHash, meta, true);
 	}
 	public static Transaction sendGas(byte[] sender, byte[] receiver, byte[] priKey,int amount) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
