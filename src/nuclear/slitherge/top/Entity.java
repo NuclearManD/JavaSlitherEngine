@@ -2,6 +2,8 @@ package nuclear.slitherge.top;
 
 import java.util.ArrayList;
 
+import com.sun.xml.internal.fastinfoset.util.PrefixArray;
+
 import nuclear.slitherge.physics.Vector2;
 
 public abstract class Entity {
@@ -17,10 +19,14 @@ public abstract class Entity {
 	public boolean isShielded=false;
 	public double range=10.0;
 	private boolean isDead=false;
+	protected String prefix="a ";
 	public Entity(int dimt,double x2, double y2){
 		x=x2;
 		y=y2;
 		dimension=dimt;
+	}
+	public String getPrefix(){
+		return prefix;
 	}
 	public void doDamage(int damage){
 		health-=damage;
@@ -83,7 +89,7 @@ public abstract class Entity {
 		this.name = name;
 	}
 	public String getDescription(){
-		return "There is a "+getName();
+		return "There is "+prefix+getName();
 	}
 	public String look(){
 		String out="";

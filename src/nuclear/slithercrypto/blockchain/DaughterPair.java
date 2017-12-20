@@ -2,8 +2,6 @@ package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
 
-import nuclear.slitherge.top.io;
-
 public class DaughterPair {
 	public Transaction tr;
 	public Block block;
@@ -23,15 +21,13 @@ public class DaughterPair {
 		byte out[]=new byte[Transaction.PACKED_LEN+bkp.length];
 		for(int i=0;i<Transaction.PACKED_LEN;i++)
 			out[i]=trp[i];
-		for(int i=0;i<bkp.length;i++)
-			out[i+Transaction.PACKED_LEN]=bkp[i];
-		io.println(""+out.length);
+		for(int i=Transaction.PACKED_LEN;i<out.length;i++)
+			out[i]=bkp[i-Transaction.PACKED_LEN];
 		return out;
 	}
 	public static DaughterPair deserialize(byte[] data) {
 		byte trp[]=Arrays.copyOf(data, Transaction.PACKED_LEN);
 		byte bkp[]=Arrays.copyOfRange(data, Transaction.PACKED_LEN,data.length);
-		io.println(""+data.length);
 		return new DaughterPair(new Transaction(trp),new Block(bkp));
 	}
 }

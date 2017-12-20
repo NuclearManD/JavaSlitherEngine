@@ -2,10 +2,13 @@ package nuclear.slitherio;
 
 import java.util.Scanner;
 
+import com.sun.org.apache.bcel.internal.generic.IXOR;
+
 public class SlitherS {
 	public static final boolean LEAST_TO_GREATEST = true;
 	public static final boolean GREATEST_TO_LEAST = false;
-	private static Scanner iport;
+	private static Scanner iport=new Scanner(System.in);
+	@Deprecated
 	public static void setupIport(){
 		iport=new Scanner(System.in);
 	}
@@ -128,5 +131,21 @@ public class SlitherS {
 	        o|=in[i]<<(i*8);
 	    }
 		return o;
+	}
+	public static int find(int[] a,int j){
+		for(int i=0;i<a.length;i++){
+			if(a[i]==j)
+				return i;
+		}
+		return -1;
+	}
+	public static int[] randomInts(int len,int min, int max){
+		int out[]=new int[len];
+		int range=max-min;
+		for(int i=0;i<len;i++){
+			out[i]=(int)(Math.random()*range)+min;
+		}
+		return out;
+		
 	}
 }

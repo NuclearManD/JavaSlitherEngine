@@ -1,6 +1,7 @@
 package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
 
 import nuclear.slithercrypto.Crypt;
@@ -65,7 +66,8 @@ public class Block {
 	public boolean verify() {
 		byte[] packed=packNoHash();
 		valid=Arrays.equals(Crypt.SHA256(packed),hash);
-		valid=valid&&(difficulty.compareTo(new uint256_t(hash))>0);
+		if(valid)
+			valid=difficulty.compareTo(new uint256_t(hash))>0;
 		return valid;
 	}
 	public boolean mineOnce(byte[] publicKey) {
@@ -211,12 +213,11 @@ public class Block {
 		return data.length/Transaction.PACKED_LEN;
 	}
 	public String toString(){
-		return /*"Block:"+
+		return "Block:"+
 				"\n  StoredHash="+Base64.getEncoder().encodeToString(hash)+
 				"\n  actualHash="+Base64.getEncoder().encodeToString(Crypt.SHA256(packNoHash()))+
 				"\n  dataLength="+data.length+
-				"\n  data="+new String(data,StandardCharsets.UTF_8)+
-				"\n  valid   =  "+verify();*/""+(blockLen);
+				"\n  valid   =  "+verify();
 	}
 	public void CPUmine(byte[] pubKey) {
 		long hashes=0;
@@ -229,6 +230,5 @@ public class Block {
 				mil=System.currentTimeMillis();
 			}
 		}
-		io.println("MINING SUCCESSFUL in " +hashes+" hashes.");
 	}
 }

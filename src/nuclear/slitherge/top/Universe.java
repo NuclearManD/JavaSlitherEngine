@@ -1,6 +1,8 @@
 package nuclear.slitherge.top;
 import java.util.ArrayList;
 
+import com.sun.org.apache.bcel.internal.generic.GOTO;
+
 
 public class Universe {
 	public static final double max_pos = 1000000000000.0;
@@ -10,9 +12,20 @@ public class Universe {
 	private static int time=0;
 	public static int conversion=1000; // units/km
 	public static void update() throws Exception {
+		/*for(int i=0;i<dimensions.size();i++){//Dimension dim:dimensions){
+			if(dimensions.get(i)!=null){
+				for(Dimension dim:dimensions){
+					if(dim!=null&&dimensions.get(i).getName()==dim.getName()){
+						dimensions.set(i, null);
+					}
+				}
+			}
+		}*/
 		try{
-			for(byte i=0;i<dimensions.size();i++)
-				dimensions.get(i).update();
+			for(byte i=0;i<dimensions.size();i++){
+				if(dimensions.get(i)!=null)
+					dimensions.get(i).update();
+			}
 			time++;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -28,10 +41,15 @@ public class Universe {
 		return (time/6)%24+":"+10*(time%6)+", Stardate "+(time/43200+2984)+
 				"/"+((time/4320)%10+1)+"/"+((time/144)%30+1);
 	}
-	public static void addDim(Dimension dimension) {
+	public static int addDim(Dimension dimension) {
 		dimensions.add(dimension);
+		dimension.id=dimensions.indexOf(dimension);
+		io.println(dimension.id);
+		return dimension.id;
 	}
 	public static void teleportEntity(Entity c, int dimt) {
+		if(dimensions.get(dimt)==null)
+			return;
 		dimensions.get(dimt).addEntity(dimensions.get(c.dimension).removeEntity(c));
 		c.dimension=dimt;
 	}

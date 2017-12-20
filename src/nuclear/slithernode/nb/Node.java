@@ -44,17 +44,11 @@ public class Node extends Server {
 		String out="OK";
 		byte[] data=Arrays.copyOfRange(in, 6, in.length);
 		io.println("Request for "+cmd);
-		//io.println("Data: "+Arrays.toString(data));
+		io.println("Data: "+Arrays.toString(data));
 		if(cmd.equals("ADPAIR")){
 			DaughterPair pair=DaughterPair.deserialize(data);
-			if(!pair.verify()) {
+			if(!pair.verify())
 				out="INVALID";
-				io.println("Client submitted invalid pair...");
-				if(!pair.block.verify())
-					io.println("  > The block was invalid.");
-				if(!pair.tr.verify())
-					io.println("  > the transaction was invalid");
-			}
 			else{
 				current.addTransaction(pair.tr);
 				daughters.add(pair.block);
