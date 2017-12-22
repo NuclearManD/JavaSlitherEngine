@@ -36,6 +36,7 @@ public class Transaction {
 		type=t;
 	}
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
+		ECDSAKey key=new ECDSAKey(publickey,priKey);
 		byte data[]=new byte[TRANSACTION_LENGTH];
 		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),program_data);
 		tmp.CPUmine(publickey);
@@ -44,15 +45,20 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
-		Transaction trans=new Transaction(publickey,data,TRANSACTION_STORE_FILE);
-		trans.setMeta(meta.getBytes(StandardCharsets.UTF_8));
-		n=data.length-SIG_LEN;
-		ECDSAKey key=new ECDSAKey(publickey,priKey);
-		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
-		for(byte i=0;i<sig.length;i++) {
-			data[i+TRANSACTION_LENGTH-SIG_LEN]=sig[i];
+		byte[] byte_meta=meta.getBytes(StandardCharsets.UTF_8);
+		data[32]=(byte) byte_meta.length;
+		n=33;
+		for(byte i:byte_meta){
+			data[n]=i;
+			n++;
 		}
-		return new DaughterPair(trans,tmp);
+		n=data.length-SIG_LEN;
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
+		for(byte i:sig) {
+			data[n]=i;
+			n++;
+		}
+		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_FILE),tmp);
 	}
 	public static Transaction sendGas(byte[] sender, byte[] receiver, byte[] priKey,int amount) {
 		byte data[]=new byte[TRANSACTION_LENGTH];

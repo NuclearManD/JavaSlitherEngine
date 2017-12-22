@@ -1,6 +1,7 @@
 package nuclear.slitherio;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import com.sun.org.apache.bcel.internal.generic.IXOR;
@@ -126,7 +127,7 @@ public class SlitherS {
 	}
 	public static long bytesToLong(byte[] in) {
 	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-	    buffer.put(in);
+	    buffer.put(Arrays.copyOf(in, 8));
 	    buffer.flip();
 	    return buffer.getLong();
 	}
