@@ -1,20 +1,23 @@
 package nuclear.blocks.node;
 
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import nuclear.blocks.client.ClientIface;
 import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithernet.Client;
 
 public class ExternalNode{
-	private String address;
+	private ClientIface client;
 	public ExternalNode(String host) {
-		address=host;
+		try {
+			client=new ClientIface(host);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public boolean submitPair(DaughterPair pair) {
-		try {
-			if(Client.ezPoll(1152, new String(pair.serialize(),StandardCharsets.UTF_8), address).equals("OK")) return true;
-		}catch(Exception e) {}
-		return false;
+		return client.uploadPair(pair);
 	}
 }

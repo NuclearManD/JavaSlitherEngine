@@ -14,8 +14,9 @@ import nuclear.slitherge.top.io;
 import nuclear.slithernet.Server;
 
 public class NodeServer extends Server {
-	private static final byte CMD_ADD_PAIR = 5;
-	private static final byte CMD_ADD_TRANS = 1;
+	public static final byte CMD_ADD_PAIR = 5;
+	public static final byte CMD_ADD_TRANS = 1;
+	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
 	BlockChainManager blockchain;
 	byte[] pubkey;
 	public NodeServer(byte[] Key) {
