@@ -16,6 +16,8 @@ public class TransactionPackTest {
 		io.println("Meta: "+new String(t2.getMeta(),StandardCharsets.UTF_8));
 		if(t2.type!=t.type)
 			io.println("Error: types don't match!");
+		io.println("valid: "+t.verify());
+		io.println("valid: "+t2.verify());
 	}
 
 }
