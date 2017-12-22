@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Base64;
 
 import nuclear.slithercrypto.ECDSAKey;
-import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
@@ -25,6 +24,8 @@ public class Transaction {
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
+	
+	
 	public Transaction(byte[] packed) {
 		pubKey=Arrays.copyOf(packed, KEY_LEN);
 		descriptor=Arrays.copyOfRange(packed, KEY_LEN, PACKED_LEN-1);

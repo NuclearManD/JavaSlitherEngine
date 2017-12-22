@@ -2,7 +2,6 @@ package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
 
-import nuclear.slitherge.top.io;
 
 public class DaughterPair {
 	public Transaction tr;

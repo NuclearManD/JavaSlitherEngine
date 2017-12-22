@@ -9,9 +9,11 @@ import nuclear.slitherio.uint256_t;
 
 public class BlockChainManager {
 	Block current;
+	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);
 	ArrayList<Block> blocks=new ArrayList<Block>();
 	ArrayList<Block> daughters=new ArrayList<Block>();
-	public BlockChainManager(Block genesis) {
+	public BlockChainManager() {
+		genesis.CPUmine(new byte[91]);
 		blocks.add(genesis);
 		current=new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
 	}
