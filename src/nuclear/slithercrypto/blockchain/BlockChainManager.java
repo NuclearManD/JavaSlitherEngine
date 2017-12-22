@@ -18,7 +18,7 @@ public class BlockChainManager {
 		current=new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
 	}
 	public void addPair(DaughterPair pair) {
-		current.addTransaction(pair.tr);
+		addTransaction(pair.tr);
 		daughters.add(pair.block);
 	}
 	public byte[] readFile(String meta,byte[] pubAdr) {
@@ -51,5 +51,8 @@ public class BlockChainManager {
 		}
 		blocks.add(current);
 		current=new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
+	}
+	public void addTransaction(Transaction t) {
+		current.addTransaction(t);
 	}
 }
