@@ -2,6 +2,8 @@ package nuclear.slithercrypto.blockchain;
 
 import java.util.Arrays;
 
+import nuclear.slitherge.top.io;
+
 public class DaughterPair {
 	public Transaction tr;
 	public Block block;
@@ -10,9 +12,12 @@ public class DaughterPair {
 		block=d;
 	}
 	public boolean verify() {
-		if(block.verify()&&tr.verify())
-			if(Arrays.copyOf(tr.descriptor,32).equals(block.getHash()))
-				return true;
+		if(!block.verify()) {
+		}else if(!tr.verify()) {
+		}else if(Arrays.equals(Arrays.copyOf(tr.descriptor,32),block.getHash()))
+			return true;
+		else {
+		}
 		return false;
 	}
 	public byte[] serialize() {
