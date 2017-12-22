@@ -23,7 +23,7 @@ public class BlockChainManagerTest {
 			}
 		}
 		io.println("Creating file...");
-		BlockChainManager man=new BlockChainManager(genesis);
+		BlockChainManager man=new BlockChainManager();
 		byte[] program_data="Hello World!".getBytes(StandardCharsets.UTF_8);
 		DaughterPair pairTmp = Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), program_data, genesis.getHash(), "Troll");
 		man.addPair(pairTmp);

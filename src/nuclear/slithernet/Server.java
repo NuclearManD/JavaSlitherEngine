@@ -40,14 +40,13 @@ public abstract class Server implements Runnable{
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
 		long length=is.readLong();
 		byte in[]=new byte[(int)length];
-		int i=0;
-		while(length>i&&is.available()>0) {
-			in[i]=is.readByte();
-			i++;
+		if(length>0) {
+			is.readFully(in, 0, (int)length);
 		}
 		byte[] o=easyServe(in);
 		os.writeLong(o.length);
 		os.write(o);
+		os.flush();
 		os.close();
 		is.close();
 		client.close();

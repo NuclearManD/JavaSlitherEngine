@@ -17,17 +17,18 @@ public class Client {
 		inStream=new DataInputStream(socket.getInputStream());
 		outStream=new DataOutputStream(socket.getOutputStream());
 	}
-	public static String ezPoll(int port, String in,String host) throws IOException {
-		Client tmp=new Client(port,host);
-		tmp.outStream.writeLong(in.length());
-		tmp.outStream.write(in.getBytes(StandardCharsets.UTF_8));
-		long len=tmp.inStream.readLong();
+	public String ezPoll(String in) throws IOException {
+		return new String(poll(in.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+	}
+	public byte[] poll(byte[] in) throws IOException {
+		outStream.writeLong(in.length);
+		outStream.write(in);
+		outStream.flush();
+		long len=inStream.readLong();
 		byte out[]=new byte[(int)len];
-		int i=0;
-		while(len>i&&tmp.inStream.available()>0) {
-			out[i]=tmp.inStream.readByte();
-			i++;
+		if(len>0) {
+			inStream.readFully(out, 0, (int)len);
 		}
-		return new String(out,StandardCharsets.UTF_8);
+		return out;
 	}
 }
