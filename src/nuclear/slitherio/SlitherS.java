@@ -1,5 +1,6 @@
 package nuclear.slitherio;
 
+import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 import com.sun.org.apache.bcel.internal.generic.IXOR;
@@ -119,18 +120,15 @@ public class SlitherS {
 		return out;
 	}
 	public static byte[] longToBytes(long in) {
-		byte[] o = new byte[8];
-		for (int i=7; i>=0; i--){
-	        o[i] = (byte) (in >> i*8);
-	    }
-		return o;
+	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+	    buffer.putLong(in);
+	    return buffer.array();
 	}
 	public static long bytesToLong(byte[] in) {
-		long o=0;
-		for (int i=7; i>=0; i--){
-	        o|=in[i]<<(i*8);
-	    }
-		return o;
+	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+	    buffer.put(in);
+	    buffer.flip();
+	    return buffer.getLong();
 	}
 	public static int find(int[] a,int j){
 		for(int i=0;i<a.length;i++){
