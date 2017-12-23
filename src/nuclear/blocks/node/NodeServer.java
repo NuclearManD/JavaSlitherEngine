@@ -65,8 +65,8 @@ public class NodeServer extends Server {
 	private void log(String string, String string2) {
 		io.println(string+"  : "+string2);
 	}
-	private Block mineBlockForChain(Block b) {
+	/*private Block mineBlockForChain(Block b) {
 		b.CPUmine(pubkey);
 		return b;
-	}
+	}*/
 }
