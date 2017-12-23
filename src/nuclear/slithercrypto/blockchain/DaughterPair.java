@@ -1,6 +1,8 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 
 
 public class DaughterPair {
@@ -33,5 +35,8 @@ public class DaughterPair {
 		byte trp[]=Arrays.copyOf(data, Transaction.PACKED_LEN);
 		byte bkp[]=Arrays.copyOfRange(data, Transaction.PACKED_LEN,data.length);
 		return new DaughterPair(new Transaction(trp),new Block(bkp));
+	}
+	public String toString() {
+		return "Pair named '"+new String(tr.getMeta(),StandardCharsets.UTF_8)+"' created by "+Base64.getEncoder().encodeToString(tr.pubKey)+"\n with hash: "+Base64.getEncoder().encodeToString(block.getHash());
 	}
 }

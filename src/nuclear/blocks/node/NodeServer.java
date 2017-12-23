@@ -31,8 +31,6 @@ public class NodeServer extends Server {
 		byte cmd=in[0];
 		byte[] response="OK".getBytes(StandardCharsets.UTF_8);
 		byte data[]=Arrays.copyOfRange(in,1,in.length);
-		io.println(in[0]);
-		io.println(Arrays.toString(in));
 		if(cmd==CMD_ADD_PAIR) {
 			DaughterPair pair=DaughterPair.deserialize(data);
 			if(pair.verify()) {
