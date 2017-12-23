@@ -12,7 +12,6 @@ public class Node implements Runnable {
 		ECDSAKey key=new ECDSAKey();
 		server=new NodeServer(key.getPublicKey());
 	}
-	@Override
 	public void run() {
 		
 	}
