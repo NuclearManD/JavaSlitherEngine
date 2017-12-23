@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import com.sun.org.apache.bcel.internal.generic.IXOR;
-
 public class SlitherS {
 	public static final boolean LEAST_TO_GREATEST = true;
 	public static final boolean GREATEST_TO_LEAST = false;

@@ -1,8 +1,6 @@
 package nuclear.slitherge.top;
 import java.util.ArrayList;
 
-import com.sun.org.apache.bcel.internal.generic.GOTO;
-
 
 public class Universe {
 	public static final double max_pos = 1000000000000.0;

@@ -2,7 +2,7 @@ package nuclear.slitherge.top;
 
 import java.util.ArrayList;
 
-import com.sun.xml.internal.fastinfoset.util.PrefixArray;
+//import com.sun.xml.internal.fastinfoset.util.PrefixArray;
 
 import nuclear.slitherge.physics.Vector2;
 
