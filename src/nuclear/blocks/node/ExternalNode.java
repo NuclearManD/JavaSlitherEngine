@@ -2,11 +2,9 @@ package nuclear.blocks.node;
 
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import nuclear.blocks.client.ClientIface;
 import nuclear.slithercrypto.blockchain.DaughterPair;
-import nuclear.slithernet.Client;
 
 public class ExternalNode{
 	private ClientIface client;

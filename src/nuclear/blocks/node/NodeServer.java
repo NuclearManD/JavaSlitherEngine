@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import nuclear.slithercrypto.Crypt;
-import nuclear.slithercrypto.ECDSAKey;
-import nuclear.slithercrypto.blockchain.Block;
 import nuclear.slithercrypto.blockchain.BlockChainManager;
 import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithercrypto.blockchain.Transaction;

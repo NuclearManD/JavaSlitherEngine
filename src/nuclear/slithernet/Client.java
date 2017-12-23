@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import nuclear.slitherge.top.io;
-
 public class Client {
 	protected DataInputStream inStream;
 	protected DataOutputStream outStream;
