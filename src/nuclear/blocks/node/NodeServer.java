@@ -8,6 +8,7 @@ import nuclear.slithercrypto.blockchain.BlockChainManager;
 import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithercrypto.blockchain.Transaction;
 import nuclear.slitherge.top.io;
+import nuclear.slitherio.CLILogger;
 import nuclear.slitherio.SlitherS;
 import nuclear.slithernet.Server;
 
@@ -25,9 +26,11 @@ public class NodeServer extends Server {
 		blockchain=new BlockChainManager();
 		pubkey=Key;
 		io.println("Starting...");
-		minerThread=new Thread();
+		minerObject=new Miner(blockchain,new CLILogger(),true,pubkey);
+		minerThread=new Thread(minerObject);
 		try {
 			start();
+			minerThread.start();
 		} catch (IOException e) {
 			io.println("Could not bind port");
 		}
