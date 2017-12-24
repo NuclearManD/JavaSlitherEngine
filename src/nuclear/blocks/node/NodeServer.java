@@ -8,11 +8,13 @@ import nuclear.slithercrypto.blockchain.BlockChainManager;
 import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithercrypto.blockchain.Transaction;
 import nuclear.slitherge.top.io;
+import nuclear.slitherio.SlitherS;
 import nuclear.slithernet.Server;
 
 public class NodeServer extends Server {
 	public static final byte CMD_ADD_PAIR = 5;
 	public static final byte CMD_ADD_TRANS = 1;
+	public static final byte CMD_GET_BLOCK = 2;
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
 	BlockChainManager blockchain;
 	byte[] pubkey;
@@ -53,6 +55,10 @@ public class NodeServer extends Server {
 				log("CLIENT_ERR","Invalid Transaction: "+t.toString());
 				log(" > ",t.toString());
 			}
+		}else if(cmd==CMD_GET_BLOCK){
+			int index=(int)SlitherS.bytesToLong(data);
+			if(index<blockchain.length())
+				return blockchain.getBlockByIndex(index).pack();
 		}else
 			response="UREC".getBytes(StandardCharsets.UTF_8);
 		return response;

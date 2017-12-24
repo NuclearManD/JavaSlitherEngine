@@ -230,4 +230,7 @@ public class Block {
 			}
 		}
 	}
+	public void setLastBlockHash(byte[] lsblockhash) {
+		lsblock=lsblockhash;
+	}
 }

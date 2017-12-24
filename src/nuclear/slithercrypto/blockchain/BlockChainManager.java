@@ -55,4 +55,20 @@ public class BlockChainManager {
 	public void addTransaction(Transaction t) {
 		current.addTransaction(t);
 	}
+	public boolean addBlock(Block block){
+		if(block==null)
+			return false;
+		if(block.verify()&&Arrays.equals(blocks.get(blocks.size()-1).getHash(),block.getHash()))
+			blocks.add(blocks.size()-1, block);
+		else
+			return false;
+		blocks.get(length()).setLastBlockHash(block.getHash());
+		return true;
+	}
+	public int length() {
+		return blocks.size()-1;// subtract one to only count valid blocks
+	}
+	public Block getBlockByIndex(int index) {
+		return blocks.get(index);
+	}
 }
