@@ -18,11 +18,14 @@ public class NodeServer extends Server {
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
 	BlockChainManager blockchain;
 	byte[] pubkey;
+	protected Thread minerThread;
+	protected Miner minerObject;
 	public NodeServer(byte[] Key) {
 		super(1152);
 		blockchain=new BlockChainManager();
 		pubkey=Key;
 		io.println("Starting...");
+		miner=new Thread();
 		try {
 			start();
 		} catch (IOException e) {
