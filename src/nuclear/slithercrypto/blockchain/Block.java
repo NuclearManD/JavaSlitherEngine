@@ -33,7 +33,7 @@ public class Block {
 		key=Arrays.copyOfRange(packed, 32, 64);
 		miner=Arrays.copyOfRange(packed, 64, 155);
 		lsblock=Arrays.copyOfRange(packed, 155, 187);
-		difficulty=new uint256_t(Arrays.copyOfRange(packed, 187, 219));
+		difficulty=uint256_t.make(Arrays.copyOfRange(packed, 187, 219));
 		version=Arrays.copyOfRange(packed, 219, 223);
 		blockLen=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 223, 231));
 		timestamp=SlitherS.bytesToLong(Arrays.copyOfRange(packed, 231, 239));
@@ -63,13 +63,13 @@ public class Block {
 	 *  Checks if the block is valid
 	 *  @return true if block is valid, otherwise false
 	 */
-	public boolean verify() {
+	synchronized public boolean verify() {
 		byte[] packed=packNoHash();
 		valid=Arrays.equals(Crypt.SHA256(packed),hash);
-		valid=valid&&(difficulty.compareTo(new uint256_t(hash))>0);
+		valid=valid&&(difficulty.compareTo(uint256_t.make(hash))>0);
 		return valid;
 	}
-	public boolean mineOnce(byte[] publicKey) {
+	synchronized public boolean mineOnce(byte[] publicKey) {
 		if(!valid) {
 			miner=publicKey;
 			r.nextBytes(key);
@@ -79,11 +79,11 @@ public class Block {
 		}
 		return true;
 	}
-	public void reHash() {
+	synchronized public void reHash() {
 		byte[] packed=packNoHash();
 		hash=Crypt.SHA256(packed);
 	}
-	private byte[] packNoHash() {
+	synchronized private byte[] packNoHash() {
 		int length=HEADER_LENGTH+data.length-32;
 		byte[] out = new byte[length];
 		int n=0;
@@ -121,7 +121,7 @@ public class Block {
 		}
 		return out;
 	}
-	public byte[] pack() {
+	synchronized public byte[] pack() {
 		int length=HEADER_LENGTH+data.length;
 		byte[] out = new byte[length];
 		int n=0;
@@ -163,35 +163,35 @@ public class Block {
 		}
 		return out;
 	}
-	public byte[] getData() {
+	synchronized public byte[] getData() {
 		return data;
 	}
-	public void setData(byte[] data) {
+	synchronized public void setData(byte[] data) {
 		this.data=data;
 		valid=false;
 		blockLen=HEADER_LENGTH+data.length;
 	}
-	public void setDifficulty(byte[] data) {
-		this.difficulty=new uint256_t(data);
+	synchronized public void setDifficulty(byte[] data) {
+		this.difficulty=uint256_t.make(data);
 		valid=false;
 	}
-	public uint256_t getDifficulty() {
+	synchronized public uint256_t getDifficulty() {
 		return difficulty;
 	}
-	public byte[] getVersion() {
+	synchronized public byte[] getVersion() {
 		return version;
 	}
-	public boolean isComplete() {
+	synchronized public boolean isComplete() {
 		byte[] packed=pack();
 		return blockLen==packed.length;
 	}
-	public Transaction getTransaction(int index){
+	synchronized public Transaction getTransaction(int index){
 		index=index*Transaction.PACKED_LEN;
 		if(index>data.length)
 			return null;
 		return new Transaction(Arrays.copyOfRange(data,index,index+Transaction.PACKED_LEN));
 	}
-	public void addTransaction(Transaction t){
+	synchronized public void addTransaction(Transaction t){
 		int index=data.length;
 		byte[] tmp=new byte[index+Transaction.PACKED_LEN];
 		for(int i=0;i<data.length;i++) {
@@ -203,12 +203,12 @@ public class Block {
 		}
 		data=tmp;
 	}
-	public byte[] getHash() {
+	synchronized public byte[] getHash() {
 		if(hash==null)
 			reHash();
 		return hash;
 	}
-	public int numTransactions() {
+	synchronized public int numTransactions() {
 		return data.length/Transaction.PACKED_LEN;
 	}
 	public String toString(){
@@ -230,7 +230,10 @@ public class Block {
 			}
 		}
 	}
-	public void setLastBlockHash(byte[] lsblockhash) {
+	synchronized public void setLastBlockHash(byte[] lsblockhash) {
 		lsblock=lsblockhash;
+	}
+	synchronized public void setDifficulty(uint256_t difficulty_raw) {
+		difficulty=difficulty_raw;
 	}
 }

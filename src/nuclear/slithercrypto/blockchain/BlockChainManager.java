@@ -8,20 +8,20 @@ import nuclear.slitherge.top.io;
 import nuclear.slitherio.uint256_t;
 
 public class BlockChainManager {
-	Block current;
+	private Block current;
 	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);
 	ArrayList<Block> blocks=new ArrayList<Block>();
 	ArrayList<Block> daughters=new ArrayList<Block>();
 	public BlockChainManager() {
 		genesis.CPUmine(new byte[91]);
 		blocks.add(genesis);
-		current=new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
+		setCurrent(new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
 	}
-	public void addPair(DaughterPair pair) {
+	synchronized public void addPair(DaughterPair pair) {
 		addTransaction(pair.tr);
 		daughters.add(pair.block);
 	}
-	public byte[] readFile(String meta,byte[] pubAdr) {
+	synchronized public byte[] readFile(String meta,byte[] pubAdr) {
 		for(Block block:blocks) {
 			for(int i=0;i<block.numTransactions();i++) {
 				Transaction t=block.getTransaction(i);
@@ -32,16 +32,16 @@ public class BlockChainManager {
 		}
 		return null;
 	}
-	public Block getDaughter(byte[] hash) {
+	synchronized public Block getDaughter(byte[] hash) {
 		for(Block i:daughters) {
 			if(Arrays.equals(i.getHash(),hash))return i;
 		}
 		return null;
 	}
-	public void commit(byte[] key) {
+	synchronized public void commit(byte[] key) {
 		long hashes=0;
 		long mil=System.currentTimeMillis();
-		while(!current.mineOnce(key)) {
+		while(!getCurrent().mineOnce(key)) {
 			hashes++;
 			if(System.currentTimeMillis()-mil>3000) {
 				io.println(hashes/(System.currentTimeMillis()-mil)+" KH/s...");
@@ -49,26 +49,35 @@ public class BlockChainManager {
 				mil=System.currentTimeMillis();
 			}
 		}
-		blocks.add(current);
-		current=new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]);
+		commit();
 	}
-	public void addTransaction(Transaction t) {
-		current.addTransaction(t);
+	synchronized public void addTransaction(Transaction t) {
+		getCurrent().addTransaction(t);
 	}
-	public boolean addBlock(Block block){
+	synchronized public boolean addBlock(Block block){
 		if(block==null)
 			return false;
 		if(block.verify()&&Arrays.equals(blocks.get(blocks.size()-1).getHash(),block.getHash()))
 			blocks.add(block);
 		else
 			return false;
-		current.setLastBlockHash(block.getHash());
+		getCurrent().setLastBlockHash(block.getHash());
 		return true;
 	}
-	public int length() {
+	synchronized public int length() {
 		return blocks.size();// subtract one to only count valid blocks
 	}
-	public Block getBlockByIndex(int index) {
+	synchronized public Block getBlockByIndex(int index) {
 		return blocks.get(index);
+	}
+	synchronized public void commit() {
+		blocks.add(getCurrent());
+		setCurrent(new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
+	}
+	synchronized public Block getCurrent() {
+		return current;
+	}
+	synchronized public void setCurrent(Block current) {
+		this.current = current;
 	}
 }

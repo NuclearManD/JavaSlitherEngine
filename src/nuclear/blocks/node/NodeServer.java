@@ -25,7 +25,7 @@ public class NodeServer extends Server {
 		blockchain=new BlockChainManager();
 		pubkey=Key;
 		io.println("Starting...");
-		miner=new Thread();
+		minerThread=new Thread();
 		try {
 			start();
 		} catch (IOException e) {
