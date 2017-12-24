@@ -57,8 +57,11 @@ public class NodeServer extends Server {
 			}
 		}else if(cmd==CMD_GET_BLOCK){
 			int index=(int)SlitherS.bytesToLong(data);
+			io.println("Sending block "+index+" to client...");
 			if(index<blockchain.length())
 				return blockchain.getBlockByIndex(index).pack();
+			else
+				io.println("Blockchain is not as long as "+index+" blocks.");
 		}else
 			response="UREC".getBytes(StandardCharsets.UTF_8);
 		return response;
