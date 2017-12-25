@@ -20,13 +20,13 @@ public class NodeServer extends Server {
 	BlockChainManager blockchain;
 	byte[] pubkey;
 	protected Thread minerThread;
-	protected Miner minerObject;
+	protected NodeMiner minerObject;
 	public NodeServer(byte[] Key) {
 		super(1152);
 		blockchain=new BlockChainManager();
 		pubkey=Key;
 		io.println("Starting...");
-		minerObject=new Miner(blockchain,new CLILogger(),true,pubkey);
+		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
 		minerThread=new Thread(minerObject);
 		try {
 			start();

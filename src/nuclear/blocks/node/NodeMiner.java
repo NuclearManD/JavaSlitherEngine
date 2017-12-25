@@ -9,12 +9,12 @@ import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherLog;
 import nuclear.slitherio.uint256_t;
 
-public class Miner implements Runnable {
+public class NodeMiner implements Runnable {
 	public BlockChainManager man;
 	protected SlitherLog logger;
 	protected boolean solo;
 	private byte[] pubKey;
-	public Miner(BlockChainManager man,SlitherLog log, boolean SoloNetwork, byte[] pubKey) {
+	public NodeMiner(BlockChainManager man,SlitherLog log, boolean SoloNetwork, byte[] pubKey) {
 		this.man=man;
 		logger=log;
 		solo=SoloNetwork;

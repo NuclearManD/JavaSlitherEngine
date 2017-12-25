@@ -1,6 +1,6 @@
 package nuclear.blocks.test;
 
-import nuclear.blocks.node.Miner;
+import nuclear.blocks.node.NodeMiner;
 import nuclear.slithercrypto.ECDSAKey;
 import nuclear.slithercrypto.blockchain.BlockChainManager;
 import nuclear.slithercrypto.blockchain.Transaction;
@@ -11,7 +11,7 @@ public class MinerTest {
 	public static void main(String[] args) {
 		ECDSAKey key=new ECDSAKey();
 		BlockChainManager man=new BlockChainManager();
-		Miner miner=new Miner(man,new CLILogger(),true,key.getPublicKey());
+		NodeMiner miner=new NodeMiner(man,new CLILogger(),true,key.getPublicKey());
 		Thread t=new Thread(miner);
 		t.start();
 		io.println("Miner started...");

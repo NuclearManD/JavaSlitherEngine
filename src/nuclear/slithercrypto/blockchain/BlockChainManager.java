@@ -1,10 +1,12 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import nuclear.slitherge.top.io;
+import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
 public class BlockChainManager {
@@ -79,5 +81,27 @@ public class BlockChainManager {
 	}
 	synchronized public void setCurrent(Block current) {
 		this.current = current;
+	}
+	synchronized public void writeChain(OutputStream out){
+		try {
+			for(Block i:blocks) {
+				byte[] data=i.pack();
+				out.write(SlitherS.longToBytes(data.length));
+				out.write(data);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	synchronized public void writeDaughters(OutputStream out){
+		try {
+			for(Block i:daughters) {
+				byte[] data=i.pack();
+				out.write(SlitherS.longToBytes(data.length));
+				out.write(data);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }
