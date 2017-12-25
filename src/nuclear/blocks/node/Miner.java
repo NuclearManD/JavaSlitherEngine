@@ -32,7 +32,7 @@ public class Miner implements Runnable {
 			time=System.currentTimeMillis()-time;
 			double hashrate=200000.0/(double)time;
 			logger.println("In "+time+"ms 200.000,0 hashes were executed: "+(int)hashrate+" kH/s");
-			uint256_t difficultyConstant=new uint256_t("7067388259113537318333190002971674063309935587502475832486424805170479104");
+			uint256_t difficultyConstant=new uint256_t("113078212145816597093331040047546785012958969400039613319782796882727665664");
 			uint256_t hashrate_256=uint256_t.fromBigInt(uint256_t.valueOf((long)hashrate*1000));// in Hashes/s, not kH/s
 			uint256_t difficulty_raw=uint256_t.fromBigInt(difficultyConstant.divide(hashrate_256));
 			logger.println("Raw Difficulty: "+difficulty_raw);
