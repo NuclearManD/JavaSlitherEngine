@@ -56,7 +56,7 @@ public class Miner implements Runnable {
 						mil=System.currentTimeMillis();
 					}
 				}
-				time=((System.currentTimeMillis()-time)/60);
+				time=((System.currentTimeMillis()-time)/60000);
 				logger.println("Mined block "+Base64.getEncoder().encodeToString(man.getCurrent().getHash())+" in "+time+" minutes.");
 				man.commit();
 			}
