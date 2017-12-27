@@ -12,6 +12,7 @@ public class SavedChain extends BlockchainBase{
 	private Block current;
 	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);
 	public SavedChain(String storeDir) {
+		setup(chain,daughters);
 		chain=new BlockListFile(storeDir+"/chain");
 		daughters=new BlockListFile(storeDir+"/daugt");
 		setCurrent(new Block(new byte[32],new byte[32],new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));

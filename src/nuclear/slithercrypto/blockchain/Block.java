@@ -13,6 +13,8 @@ public class Block {
 	public static final int HEADER_LENGTH = 239;
 	private static final byte[] CURRENT_VERSION = {1,0,0,0};
 	public static final int TRANSACTION_LIMIT = 64;
+	public static final double MINING_REWARD = 1;
+	public static final double BYTE_COST = 0.00001;
 	private byte[] hash;			// 32 bytes
 	private byte[] key;				// 32 bytes
 	private byte[] miner;			// 91 bytes
@@ -237,5 +239,11 @@ public class Block {
 	}
 	synchronized public void setDifficulty(uint256_t difficulty_raw) {
 		difficulty=difficulty_raw;
+	}
+	public byte[] getMiner() {
+		return this.miner;
+	}
+	public double getCost() {
+		return BYTE_COST*(this.data.length+HEADER_LENGTH);
 	}
 }

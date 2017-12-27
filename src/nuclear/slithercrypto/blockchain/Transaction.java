@@ -61,26 +61,6 @@ public class Transaction {
 		}
 		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_FILE),tmp);
 	}
-	public static Transaction sendGas(byte[] sender, byte[] receiver, byte[] priKey,int amount) {
-		byte data[]=new byte[TRANSACTION_LENGTH];
-		int n=0;
-		for(byte i:receiver) {
-			data[n]=i;
-			n++;
-		}
-		for(byte i:SlitherS.longToBytes(amount)) {
-			data[n]=i;
-			n++;
-		}
-		n=data.length-SIG_LEN;
-		ECDSAKey key=new ECDSAKey(sender,priKey);
-		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
-		for(byte i:sig) {
-			data[n]=i;
-			n++;
-		}
-		return new Transaction(sender,data,TRANSACTION_SEND_GAS);
-	}
 	public static Transaction sendCoins(byte[] sender, byte[] receiver, byte[] priKey,double amount) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
 		int n=0;
@@ -88,6 +68,7 @@ public class Transaction {
 			data[n]=i;
 			n++;
 		}
+		n=91;
 		for(byte i:SlitherS.longToBytes((long)(amount*1024))) {
 			data[n]=i;
 			n++;
@@ -140,11 +121,6 @@ public class Transaction {
 			o+="Arbitrary";
 		}else if(type==TRANSACTION_SEND_COIN) {
 			o+="Send "+(double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))/1024+" Coins to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
-		}else if(type==TRANSACTION_SEND_GAS) {
-			o+="Send "+SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, KEY_LEN, 520))+" Gas to "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, KEY_LEN));
-		/*}if(type==TRANSACTION_MAKE_PROGRAM) {
-			o+="Upload Program\n";
-			o+="Daughter block hash: "+Base64.getEncoder().encodeToString(Arrays.copyOf(descriptor, 32));*/
 		}else if(type==TRANSACTION_STORE_FILE) {
 			o+="Store File With Meta '";
 			o+=new String(getMeta(),StandardCharsets.UTF_8)+"";
@@ -156,5 +132,16 @@ public class Transaction {
 	}
 	public byte[] getDaughterHash() {
 		return Arrays.copyOf(descriptor, 32);
+	}
+	public double getCoinsSent(){
+		if(type!=TRANSACTION_SEND_COIN)
+			return 0;
+		return (double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 91, 99))/1024;
+	}
+	public double getTransactionCost(){
+		return (double)TRANSACTION_LENGTH/Block.BYTE_COST;
+	}
+	public byte[] getReceiver() {
+		return Arrays.copyOf(descriptor, KEY_LEN);
 	}
 }

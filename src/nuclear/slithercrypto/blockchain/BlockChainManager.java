@@ -17,6 +17,7 @@ public class BlockChainManager extends BlockchainBase {
 	ArrayList<Block> blocks=new ArrayList<Block>();
 	ArrayList<Block> daughters=new ArrayList<Block>();
 	public BlockChainManager() {
+		setup(blocks,daughters);
 		genesis.CPUmine(new byte[91]);
 		blocks.add(genesis);
 		setCurrent(new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
