@@ -2,19 +2,18 @@ package nuclear.blocks.node;
 
 import java.util.Base64;
 
-import nuclear.slithercrypto.Crypt;
 import nuclear.slithercrypto.blockchain.Block;
-import nuclear.slithercrypto.blockchain.BlockChainManager;
+import nuclear.slithercrypto.blockchain.BlockchainBase;
 import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherLog;
 import nuclear.slitherio.uint256_t;
 
 public class NodeMiner implements Runnable {
-	public BlockChainManager man;
+	public BlockchainBase man;
 	protected SlitherLog logger;
 	protected boolean solo;
 	private byte[] pubKey;
-	public NodeMiner(BlockChainManager man,SlitherLog log, boolean SoloNetwork, byte[] pubKey) {
+	public NodeMiner(BlockchainBase man,SlitherLog log, boolean SoloNetwork, byte[] pubKey) {
 		this.man=man;
 		logger=log;
 		solo=SoloNetwork;

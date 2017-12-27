@@ -125,6 +125,8 @@ public class Block {
 		int length=HEADER_LENGTH+data.length;
 		byte[] out = new byte[length];
 		int n=0;
+		if(hash==null)
+			reHash();
 		for(byte i:hash) {
 			out[n]=i;
 			n++;

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import nuclear.slithercrypto.blockchain.BlockChainManager;
 import nuclear.slithercrypto.blockchain.DaughterPair;
+import nuclear.slithercrypto.blockchain.SavedChain;
 import nuclear.slithercrypto.blockchain.Transaction;
 import nuclear.slitherge.top.io;
 import nuclear.slitherio.CLILogger;
@@ -17,13 +17,13 @@ public class NodeServer extends Server {
 	public static final byte CMD_ADD_TRANS = 1;
 	public static final byte CMD_GET_BLOCK = 2;
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
-	BlockChainManager blockchain;
+	SavedChain blockchain;
 	byte[] pubkey;
 	protected Thread minerThread;
 	protected NodeMiner minerObject;
 	public NodeServer(byte[] Key) {
 		super(1152);
-		blockchain=new BlockChainManager();
+		blockchain=new SavedChain("C:/Node/blockchain");
 		pubkey=Key;
 		io.println("Starting...");
 		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
@@ -75,8 +75,4 @@ public class NodeServer extends Server {
 	private void log(String string, String string2) {
 		io.println(string+"  : "+string2);
 	}
-	/*private Block mineBlockForChain(Block b) {
-		b.CPUmine(pubkey);
-		return b;
-	}*/
 }

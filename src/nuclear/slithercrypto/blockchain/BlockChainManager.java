@@ -1,5 +1,7 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
-public class BlockChainManager {
+public class BlockChainManager extends BlockchainBase {
 	private Block current;
 	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);
 	ArrayList<Block> blocks=new ArrayList<Block>();
@@ -103,5 +105,44 @@ public class BlockChainManager {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	public static BlockChainManager readFiles(InputStream chain,InputStream daughter) {
+		BlockChainManager out=new BlockChainManager();
+		byte[] ls=new byte[8];
+		try {
+			while(chain.available()>0) {
+				int tmp=0;
+				while(tmp<8) {
+					ls[tmp]=(byte) chain.read();
+					tmp++;
+				}
+				byte[] buf=new byte[(int) SlitherS.bytesToLong(ls)];
+				tmp=0;
+				while(tmp<buf.length-1) {
+					tmp+=chain.read(buf,tmp,buf.length-tmp);
+				}
+				out.addBlock(new Block(buf));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			while(daughter.available()>0) {
+				int tmp=0;
+				while(tmp<8) {
+					ls[tmp]=(byte) daughter.read();
+					tmp++;
+				}
+				byte[] buf=new byte[(int) SlitherS.bytesToLong(ls)];
+				tmp=0;
+				while(tmp<buf.length-1) {
+					tmp+=daughter.read(buf,tmp,buf.length-tmp);
+				}
+				out.daughters.add(new Block(buf));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return out;
 	}
 }
