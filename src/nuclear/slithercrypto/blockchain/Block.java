@@ -246,4 +246,7 @@ public class Block {
 	public double getCost() {
 		return BYTE_COST*(this.data.length+HEADER_LENGTH);
 	}
+	public byte[] getLastHash() {
+		return lsblock;
+	}
 }

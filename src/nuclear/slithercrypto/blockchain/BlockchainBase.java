@@ -46,7 +46,8 @@ public abstract class BlockchainBase {
 					if(Arrays.equals(t.getReceiver(), adr))
 						out+=t.getCoinsSent();
 				}
-				out-=t.getTransactionCost();
+				if(Arrays.equals(t.pubKey,adr))
+					out-=t.getTransactionCost();
 			}
 			if(Arrays.equals(adr,i.getMiner()))
 				out+=i.getCost();

@@ -94,6 +94,7 @@ public class ClientIface {
 		int n=0;
 		while(true){
 			Block block=downloadByIndex(i);
+			i++;
 			if(manager.addBlock(block))
 				n++;
 			else
