@@ -14,6 +14,7 @@ public class SavedChain extends BlockchainBase{
 	public SavedChain(String storeDir) {
 		chain=new BlockListFile(storeDir+"/chain");
 		daughters=new BlockListFile(storeDir+"/daugt");
+		setCurrent(new Block(new byte[32],new byte[32],new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
 	}
 
 	synchronized public void addPair(DaughterPair pair) {

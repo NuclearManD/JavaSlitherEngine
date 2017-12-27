@@ -29,8 +29,8 @@ public class NodeServer extends Server {
 		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
 		minerThread=new Thread(minerObject);
 		try {
-			start();
 			minerThread.start();
+			start();
 		} catch (IOException e) {
 			io.println("Could not bind port");
 		}
