@@ -65,7 +65,7 @@ public class SavedChain extends BlockchainBase{
 		return true;
 	}
 	synchronized public int length() {
-		return chain.length();// subtract one to only count valid blocks
+		return chain.length();
 	}
 	synchronized public Block getBlockByIndex(int index) {
 		return chain.get(index);

@@ -95,7 +95,6 @@ public class BlockListFile implements Iterable<Block>{
 	public int length() {
 		return blockStarts.length;
 	}
-	@Override
 	public Iterator<Block> iterator() {
 		return new BlockListFileIterator(this);
 	}
