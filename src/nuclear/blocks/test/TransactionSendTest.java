@@ -16,7 +16,7 @@ public class TransactionSendTest {
 		io.println("Transaction:\t"+t.toString());
 		io.println("Valid: "+t.verify());
 		try {
-			ClientIface iface=new ClientIface("192.168.1.132");
+			ClientIface iface=new ClientIface("192.168.1.150");
 			io.print("SUCCESS: "+iface.uploadTransaction(t));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

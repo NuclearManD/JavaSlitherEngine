@@ -21,7 +21,7 @@ public class FileUploadTest {
 		io.println("Daughter:\t\t"+pair.block.toString());
 		io.println("Valid: "+pair.tr.verify());
 		try {
-			ClientIface iface=new ClientIface("192.168.1.132");
+			ClientIface iface=new ClientIface("192.168.1.150");
 			io.print("SUCCESS: "+iface.uploadPair(pair));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

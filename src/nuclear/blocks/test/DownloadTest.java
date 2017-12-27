@@ -1,6 +1,7 @@
 package nuclear.blocks.test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import nuclear.blocks.client.ClientIface;
 import nuclear.slithercrypto.Crypt;
@@ -16,11 +17,11 @@ public class DownloadTest {
 		io.println("Making key...");
 		ECDSAKey key=new ECDSAKey();
 		byte[] lastBlockHash=Crypt.SHA256("lol get rekt");
-		byte[] program_data={1,2,3,4,5,6,7,8,9};
+		byte[] program_data="Hey, it worked!!!!!!!".getBytes(StandardCharsets.UTF_8);
 		io.println("Uploading a pair...");
 		DaughterPair pair=Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), program_data, lastBlockHash, "Drink Weed");
 		try {
-			ClientIface iface=new ClientIface("192.168.1.132");
+			ClientIface iface=new ClientIface("192.168.1.150");
 			if(iface.uploadPair(pair))
 				io.print("SUCCESS...");
 			else{
@@ -31,6 +32,7 @@ public class DownloadTest {
 			BlockChainManager man=new BlockChainManager();
 			io.println("Downloading blocks...");
 			io.println("Downloaded "+iface.downloadBlockchain(man)+" new blocks.");
+			io.println(new String(man.readFile("Drink Weed", key.getPublicKey())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
