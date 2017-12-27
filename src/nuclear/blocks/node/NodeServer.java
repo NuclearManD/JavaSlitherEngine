@@ -3,7 +3,10 @@ package nuclear.blocks.node;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 
+import nuclear.slithercrypto.blockchain.Block;
+import nuclear.slithercrypto.blockchain.BlockchainBase;
 import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithercrypto.blockchain.SavedChain;
 import nuclear.slithercrypto.blockchain.Transaction;
@@ -17,15 +20,17 @@ public class NodeServer extends Server {
 	public static final byte CMD_ADD_TRANS = 1;
 	public static final byte CMD_GET_BLOCK = 2;
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
-	SavedChain blockchain;
+	public static final byte CMD_GET_DAUGHTER = 3;
+	BlockchainBase blockchain;
 	byte[] pubkey;
 	protected Thread minerThread;
 	protected NodeMiner minerObject;
 	public NodeServer(byte[] Key) {
 		super(1152);
-		blockchain=new SavedChain("C:/Node/blockchain");
-		pubkey=Key;
 		io.println("Starting...");
+		blockchain=new SavedChain("C:/Node/blockchain");
+		io.println("blockchain contains "+blockchain.length()+" normal blocks.");
+		pubkey=Key;
 		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
 		minerThread=new Thread(minerObject);
 		try {
@@ -61,13 +66,21 @@ public class NodeServer extends Server {
 				log("CLIENT_ERR","Invalid Transaction: "+t.toString());
 				log(" > ",t.toString());
 			}
-		}else if(cmd==CMD_GET_BLOCK){
+		}else if(cmd==CMD_GET_BLOCK&&data.length==8){
 			int index=(int)SlitherS.bytesToLong(data);
 			io.println("Sending block "+index+" to client...");
 			if(index<blockchain.length())
 				return blockchain.getBlockByIndex(index).pack();
 			else
 				io.println("Blockchain is not as long as "+index+" blocks.");
+		}else if(cmd==CMD_GET_DAUGHTER&&data.length==32){
+			io.println("Sending daughter block "+Base64.getEncoder().encodeToString(data)+" to client...");
+			Block block=blockchain.getDaughter(data);
+			if(block==null){
+				io.println("Daughter block not found!");
+				response="ERR".getBytes(StandardCharsets.UTF_8);
+			}else
+				response=block.pack();
 		}else
 			response="UREC".getBytes(StandardCharsets.UTF_8);
 		return response;
