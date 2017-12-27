@@ -154,4 +154,7 @@ public class Transaction {
 		o+="\n > Transaction created by "+Base64.getEncoder().encodeToString(pubKey);
 		return o;
 	}
+	public byte[] getDaughterHash() {
+		return Arrays.copyOf(descriptor, 32);
+	}
 }
