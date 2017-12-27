@@ -28,8 +28,11 @@ public class NodeServer extends Server {
 	public NodeServer(byte[] Key) {
 		super(1152);
 		io.println("Starting...");
+		io.println("Loading blockchain...");
 		blockchain=new SavedChain("C:/Node/blockchain");
-		io.println("blockchain contains "+blockchain.length()+" normal blocks.");
+		io.println("Loaded; blockchain contains "+blockchain.length()+" normal blocks.");
+		io.println("Node public key: "+Base64.getEncoder().encodeToString(Key));
+		io.println("Node balance: "+blockchain.getCoinBalance(Key));
 		pubkey=Key;
 		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
 		minerThread=new Thread(minerObject);
