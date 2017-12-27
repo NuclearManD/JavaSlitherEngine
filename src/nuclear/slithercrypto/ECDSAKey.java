@@ -1,5 +1,9 @@
 package nuclear.slithercrypto;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -32,6 +36,26 @@ public class ECDSAKey {
 			kf = KeyFactory.getInstance("EC");
 			key=new KeyPair(kf.generatePublic(new X509EncodedKeySpec(pub)), kf.generatePrivate(new PKCS8EncodedKeySpec(pri)));
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public ECDSAKey(String path) {
+		try {
+			FileInputStream stream = new FileInputStream(path);
+			byte[] pub=new byte[91];
+			for(int i=0;i<91;i++) {
+				pub[i]=(byte)stream.read();
+			}
+			byte[] pri=new byte[(int) (stream.getChannel().size()-91)];
+			for(int i=0;i<pri.length;i++) {
+				pri[i]=(byte)stream.read();
+			}
+			stream.close();
+			KeyFactory kf;
+			kf = KeyFactory.getInstance("EC");
+			key=new KeyPair(kf.generatePublic(new X509EncodedKeySpec(pub)), kf.generatePrivate(new PKCS8EncodedKeySpec(pri)));
+		}catch(Exception e) {
+			key=null;
 			e.printStackTrace();
 		}
 	}
@@ -73,5 +97,18 @@ public class ECDSAKey {
 			e.printStackTrace();
 			return false;
 		} 
+	}
+	public boolean save(String path) {
+		File gashdg=new File(path);
+		if(gashdg.exists())
+			return false;
+		try {
+			FileOutputStream stream=new FileOutputStream(path);
+			stream.write(Arrays.copyOf(getPublicKey(),91));
+			stream.write(getPrivateKey());
+			stream.close();
+			return true;
+		} catch (Exception e) {}
+		return false;
 	}
 }
