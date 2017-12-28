@@ -66,7 +66,7 @@ public class ClientIface {
 		}
 		try {
 			result = new Block(client.poll(request));
-			if(!result.verify())
+			if(!result.verify()&&x>0)
 				result=null;
 		} catch (Exception e) {
 		}

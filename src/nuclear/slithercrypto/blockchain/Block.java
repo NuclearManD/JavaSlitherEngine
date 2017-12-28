@@ -14,7 +14,7 @@ public class Block {
 	private static final byte[] CURRENT_VERSION = {1,0,0,0};
 	public static final int TRANSACTION_LIMIT = 64;
 	public static final double MINING_REWARD = 1;
-	public static final double BYTE_COST = 0.00001;
+	public static final double BYTE_COST = 1.0/1024.0;
 	private byte[] hash;			// 32 bytes
 	private byte[] key;				// 32 bytes
 	private byte[] miner;			// 91 bytes
