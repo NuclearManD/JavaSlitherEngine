@@ -139,7 +139,7 @@ public class Transaction {
 		return (double)SlitherS.bytesToLong(Arrays.copyOfRange(descriptor, 91, 99))/1024;
 	}
 	public double getTransactionCost(){
-		return (double)TRANSACTION_LENGTH/Block.BYTE_COST;
+		return (double)TRANSACTION_LENGTH*Block.BYTE_COST;
 	}
 	public byte[] getReceiver() {
 		return Arrays.copyOf(descriptor, KEY_LEN);
