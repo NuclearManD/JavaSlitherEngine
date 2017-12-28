@@ -58,7 +58,7 @@ public class SavedChain extends BlockchainBase{
 	synchronized public boolean addBlock(Block block){
 		if(block==null)
 			return false;
-		if(block.verify()&&Arrays.equals(chain.get(chain.length()-1).getHash(),block.getHash()))
+		if(block.verify()&&(chain.length()==0||Arrays.equals(chain.get(chain.length()-1).getHash(),block.getHash())))
 			chain.addBlock(block);
 		else
 			return false;
