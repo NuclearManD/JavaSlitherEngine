@@ -42,6 +42,7 @@ public class NodeMiner implements Runnable {
 				}
 				logger.println("Setting up next block...");
 				man.getCurrent().setDifficulty(difficulty_raw);
+				man.getCurrent().setLastBlockHash(man.getBlockByIndex(man.length()-1).getHash());
 				logger.println("Mining...");
 				time=System.currentTimeMillis();
 				long mil=System.currentTimeMillis();

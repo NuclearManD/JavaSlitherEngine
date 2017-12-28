@@ -2,6 +2,7 @@ package nuclear.slithercrypto.blockchain;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 
 import nuclear.slitherge.top.io;
 import nuclear.slitherio.uint256_t;
@@ -58,10 +59,13 @@ public class SavedChain extends BlockchainBase{
 	synchronized public boolean addBlock(Block block){
 		if(block==null)
 			return false;
-		if(block.verify()&&(chain.length()==0||Arrays.equals(chain.get(chain.length()-1).getHash(),block.getHash())))
+		if(block.verify()&&(chain.length()==0||Arrays.equals(chain.get(chain.length()-1).getHash(),block.getLastHash())))
 			chain.addBlock(block);
-		else
+		else {
+			io.println("Block last hash is :           "+Base64.getEncoder().encodeToString(block.getLastHash()));
+			io.println("Block last hash does not match "+Base64.getEncoder().encodeToString(chain.get(chain.length()-1).getHash()));
 			return false;
+		}
 		getCurrent().setLastBlockHash(block.getHash());
 		return true;
 	}
