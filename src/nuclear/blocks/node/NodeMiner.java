@@ -44,7 +44,7 @@ public class NodeMiner implements Runnable {
 				man.getCurrent().setDifficulty(difficulty_raw);
 				byte[] lasthash=new byte[32];
 				if(man.length()>0)
-					man.getBlockByIndex(man.length()-1).getHash();
+					lasthash=man.getBlockByIndex(man.length()-1).getHash();
 				man.getCurrent().setLastBlockHash(lasthash);
 				logger.println("Mining...");
 				time=System.currentTimeMillis();
