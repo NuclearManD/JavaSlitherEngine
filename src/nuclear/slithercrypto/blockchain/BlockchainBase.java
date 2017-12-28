@@ -54,4 +54,16 @@ public abstract class BlockchainBase {
 		}
 		return out;
 	}
+	public boolean isActive(byte[] adr) {
+		for(Block i:chain) {
+			if(Arrays.equals(adr, i.getMiner()))
+				return true;
+			for(int j=0;j<i.numTransactions();j++) {
+				Transaction t=i.getTransaction(j);
+				if(Arrays.equals(t.pubKey,adr))
+					return true;
+			}
+		}
+		return false;
+	}
 }
