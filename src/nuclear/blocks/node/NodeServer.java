@@ -29,7 +29,7 @@ public class NodeServer extends Server {
 		super(1152);
 		io.println("Starting...");
 		io.println("Loading blockchain...");
-		blockchain=new SavedChain("C:/Node/blockchain");
+		blockchain=new SavedChain(System.getProperty("user.home")+"/AppData/Roaming/NuclearBlocks/blockchain");
 		io.println("Loaded; blockchain contains "+blockchain.length()+" normal blocks.");
 		io.println("Node public key: "+Base64.getEncoder().encodeToString(Key));
 		io.println("Node balance: "+blockchain.getCoinBalance(Key)+" KiB ");
