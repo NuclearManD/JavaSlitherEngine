@@ -35,6 +35,7 @@ public class SavedChain extends BlockchainBase{
 		return null;
 	}
 	synchronized public Block getDaughter(byte[] hash) {
+		daughters.update(); // in case another program added more
 		for(Block i:daughters) {
 			if(Arrays.equals(i.getHash(),hash))return i;
 		}
@@ -57,6 +58,7 @@ public class SavedChain extends BlockchainBase{
 		getCurrent().addTransaction(t);
 	}
 	synchronized public boolean addBlock(Block block){
+		chain.update(); // in case some other program added to the blockchain first
 		if(block==null)
 			return false;
 		if(block.verify()&&(chain.length()==0||Arrays.equals(chain.get(chain.length()-1).getHash(),block.getLastHash())))
@@ -84,5 +86,9 @@ public class SavedChain extends BlockchainBase{
 	}
 	synchronized public void setCurrent(Block current) {
 		this.current = current;
+	}
+	public void update(){
+		chain.update();
+		daughters.update();
 	}
 }

@@ -66,4 +66,7 @@ public abstract class BlockchainBase {
 		}
 		return false;
 	}
+	public void update() {
+		
+	}
 }

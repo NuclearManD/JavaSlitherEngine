@@ -98,4 +98,12 @@ public class BlockListFile implements Iterable<Block>{
 	public Iterator<Block> iterator() {
 		return new BlockListFileIterator(this);
 	}
+	public void update() {
+		try {
+			readDirectory();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 }

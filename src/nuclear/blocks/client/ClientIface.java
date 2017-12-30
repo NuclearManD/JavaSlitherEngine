@@ -90,6 +90,7 @@ public class ClientIface {
 		return result;
 	}
 	public int downloadBlockchain(BlockchainBase manager){
+		manager.update();
 		int i=manager.length();
 		int n=0;
 		while(true){
