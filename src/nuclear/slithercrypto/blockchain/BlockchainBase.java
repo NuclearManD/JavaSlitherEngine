@@ -1,5 +1,6 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import nuclear.slitherio.uint256_t;
@@ -68,5 +69,16 @@ public abstract class BlockchainBase {
 	}
 	public void update() {
 		
+	}
+	public ArrayList<Transaction> getFilesOf(byte[] adr){
+		ArrayList<Transaction> out=new ArrayList<Transaction>();
+		for(Block i:chain) {
+			for(int j=0;j<i.numTransactions();j++) {
+				Transaction t=i.getTransaction(j);
+				if(t.type==Transaction.TRANSACTION_STORE_FILE&&Arrays.equals(t.pubKey,adr))
+					out.add(t);
+			}
+		}
+		return out;
 	}
 }
