@@ -21,6 +21,7 @@ public abstract class Server implements Runnable{
 		while(true) {
 			try {
 				tmpsok = sok.accept();
+				tmpsok.setTcpNoDelay(true);
 				io.println("New incoming connection from "+tmpsok.getInetAddress().getHostAddress());
 				new Thread(this).start();
 			}   
@@ -40,7 +41,6 @@ public abstract class Server implements Runnable{
 		io.println("Stage One");
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
-		while(is.available()==0);
 		long length=is.readLong();
 		io.println("Receiving "+length+" bytes of data...");
 		byte in[]=new byte[(int)length];
