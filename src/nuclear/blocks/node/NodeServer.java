@@ -26,7 +26,7 @@ public class NodeServer extends Server {
 	protected Thread minerThread;
 	protected NodeMiner minerObject;
 	public NodeServer(byte[] Key) {
-		super(1152);
+		super(44557);
 		io.println("Starting...");
 		io.println("Loading blockchain...");
 		blockchain=new SavedChain(System.getProperty("user.home")+"/AppData/Roaming/NuclearBlocks/blockchain");

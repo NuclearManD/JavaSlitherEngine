@@ -15,7 +15,7 @@ import nuclear.slithernet.Client;
 public class ClientIface {
 	protected Client client;
 	public ClientIface(String host) throws IOException{
-		client=new Client(1152, host);
+		client=new Client(44557, host);
 	}
 	public boolean uploadPair(DaughterPair pair){
 		byte[] packed=pair.serialize();
