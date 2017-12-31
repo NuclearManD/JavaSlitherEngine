@@ -69,6 +69,7 @@ public class ClientIface {
 			if(!result.verify()&&x>0)
 				result=null;
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}
@@ -86,6 +87,7 @@ public class ClientIface {
 			if(!result.verify())
 				result=null;
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}

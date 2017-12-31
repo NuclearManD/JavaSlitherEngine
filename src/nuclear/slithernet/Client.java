@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import nuclear.slitherge.top.io;
+
 public class Client {
 	protected DataInputStream inStream;
 	protected DataOutputStream outStream;
@@ -19,13 +21,16 @@ public class Client {
 	public String ezPoll(String in) throws IOException {
 		return new String(poll(in.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
 	}
-	public byte[] poll(byte[] in) throws IOException {
+	public synchronized byte[] poll(byte[] in) throws IOException {
+		io.println("\nConnecting...\n");
 		socket=new Socket(host, port);
+		io.println("Socket Opened...");
 		inStream=new DataInputStream(socket.getInputStream());
 		outStream=new DataOutputStream(socket.getOutputStream());
 		outStream.writeLong(in.length);
 		outStream.write(in);
 		outStream.flush();
+		io.println("Data sent, awaiting response...");
 		long len=inStream.readLong();
 		byte out[]=new byte[(int)len];
 		if(len>0) {
