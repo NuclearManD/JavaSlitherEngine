@@ -64,12 +64,18 @@ public class ClientIface {
 			request[n]=i;
 			n++;
 		}
-		try {
-			result = new Block(client.poll(request));
-			if(!result.verify()&&x>0)
-				result=null;
-		} catch (Exception e) {
-			e.printStackTrace();
+		int tries=0;
+		while(tries<10) {
+			tries++;
+			try {
+				result = new Block(client.poll(request));
+				if(!result.verify()&&x>0)
+					result=null;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				io.println("Connection ERROR, retrying...");
+			}
 		}
 		return result;
 	}

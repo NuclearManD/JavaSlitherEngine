@@ -1,6 +1,8 @@
 package nuclear.blocks.node;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -43,6 +45,19 @@ public class NodeServer extends Server {
 			io.println("Could not bind port");
 		}
 	}
+	/*public void start() throws IOException{
+		sok = new ServerSocket(port);
+		while(true) {
+			try {
+				Socket tmpsok = sok.accept();
+				io.println("New incoming connection from "+tmpsok.getInetAddress().getHostAddress());
+				new NodePeer(tmpsok, this);
+			}   
+			catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}*/
 	public byte[] easyServe(byte[] in) {
 		byte cmd=in[0];
 		byte[] response="OK".getBytes(StandardCharsets.UTF_8);
