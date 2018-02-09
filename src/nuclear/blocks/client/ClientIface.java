@@ -65,7 +65,7 @@ public class ClientIface {
 			n++;
 		}
 		int tries=0;
-		while(tries<1) {
+		while(tries<10) {
 			tries++;
 			try {
 				result = new Block(client.poll(request));
