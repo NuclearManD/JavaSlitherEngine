@@ -3,10 +3,7 @@ package nuclear.slithernet;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 
 import nuclear.slitherge.top.io;
@@ -17,7 +14,6 @@ public class Client {
 	protected Socket socket;
 	private String host;
 	private int port;
-	public int timeout=5000;
 	public Client(int port, String host) throws IOException{
 		this.host=host;
 		this.port=port;
@@ -27,9 +23,8 @@ public class Client {
 	}
 	public synchronized byte[] poll(byte[] in) throws IOException {
 		io.println("\nConnecting...\n");
-		socket=new Socket();
-		socket.connect(new InetSocketAddress(host,port), timeout);
-		io.println("Connected...");
+		socket=new Socket(host, port);
+		io.println("Socket Opened...");
 		inStream=new DataInputStream(socket.getInputStream());
 		outStream=new DataOutputStream(socket.getOutputStream());
 		outStream.writeLong(in.length);
