@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import nuclear.slitherge.top.io;
 
 public abstract class Server implements Runnable{
-	private static final int timeout = 100000;
 	protected Thread serverThread;
 	protected ServerSocket sok;
 	protected int port;
@@ -22,6 +21,7 @@ public abstract class Server implements Runnable{
 		while(true) {
 			try {
 				tmpsok = sok.accept();
+				tmpsok.setTcpNoDelay(true);
 				io.println("New incoming connection from "+tmpsok.getInetAddress().getHostAddress());
 				new Thread(this).start();
 			}   
@@ -38,7 +38,7 @@ public abstract class Server implements Runnable{
 		}
 	}
 	protected synchronized void serve(Socket client) throws Exception{
-		client.setSoTimeout(timeout);
+		io.println("Stage One");
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
 		long length=is.readLong();

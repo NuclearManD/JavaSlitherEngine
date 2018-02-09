@@ -6,7 +6,7 @@ import java.util.List;
 import nuclear.slithercrypto.ECDSAKey;
 import nuclear.slitherge.top.io;
 
-public class Node {
+public class Node implements Runnable {
 	NodeServer server;
 	List<ExternalNode> nodes;
 	ECDSAKey key;
@@ -20,6 +20,9 @@ public class Node {
 			key.save(keypath);
 		}
 		server=new NodeServer(key.getPublicKey());
+	}
+	public void run() {
+		
 	}
 
 	public static void main(String[] args) {
