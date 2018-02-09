@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import nuclear.slitherge.top.io;
 
+@SuppressWarnings("unused")
 public abstract class Server implements Runnable{
 	protected Thread serverThread;
 	protected ServerSocket sok;
@@ -21,7 +22,6 @@ public abstract class Server implements Runnable{
 		while(true) {
 			try {
 				tmpsok = sok.accept();
-				io.println("New incoming connection from "+tmpsok.getInetAddress().getHostAddress());
 				new Thread(this).start();
 			}   
 			catch (Exception e) {
@@ -33,27 +33,22 @@ public abstract class Server implements Runnable{
 		try {
 			serve(tmpsok);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
-	protected synchronized void serve(Socket client) throws Exception{
-		io.println("Stage One");
+	protected void serve(Socket client) throws Exception{
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
-		while(is.available()==0);
 		long length=is.readLong();
-		io.println("Receiving "+length+" bytes of data...");
 		byte in[]=new byte[(int)length];
 		if(length>0) {
 			is.readFully(in, 0, (int)length);
 		}
-		is.close();
-		io.println("Processing Request...");
 		byte[] o=easyServe(in);
 		os.writeLong(o.length);
 		os.write(o);
 		os.flush();
 		os.close();
+		is.close();
 		client.close();
 	}
 	protected byte[] easyServe(byte[] in) {
