@@ -74,8 +74,11 @@ public class NodeServer extends Server {
 			io.println("Sending block "+index+" to client...");
 			if(index<blockchain.length())
 				return blockchain.getBlockByIndex(index).pack();
-			else
+			else{
 				io.println("Blockchain is not as long as "+index+" blocks.");
+				response=new byte[1];
+				response[0]=0x55;
+			}
 		}else if(cmd==CMD_GET_DAUGHTER&&data.length==32){
 			io.println("Sending daughter block "+Base64.getEncoder().encodeToString(data)+" to client...");
 			Block block=blockchain.getDaughter(data);

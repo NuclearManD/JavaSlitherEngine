@@ -31,6 +31,9 @@ public class Block {
 	 *  @param packed bytes to be unpacked
 	 */
 	public Block(byte[] packed) {
+		if(packed.length<HEADER_LENGTH){
+			io.println("ERROR : block size error");
+		}
 		hash=Arrays.copyOfRange(packed, 0, 32);
 		key=Arrays.copyOfRange(packed, 32, 64);
 		miner=Arrays.copyOfRange(packed, 64, 155);

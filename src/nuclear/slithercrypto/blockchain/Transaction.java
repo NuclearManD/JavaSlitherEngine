@@ -18,8 +18,8 @@ public class Transaction {
 	//public static final byte TRANSACTION_EXECUTE_PROGRAM=4;
 	//public static final byte TRANSACTION_STORE_MESSAGE=5;
 	public static final byte TRANSACTION_STORE_FILE=6;
-	private static final int KEY_LEN = 91;
-	private static final int SIG_LEN = 74;
+	public static final int KEY_LEN = 91;
+	public static final int SIG_LEN = 74;
 	public static final int PACKED_LEN = 1116;//1024(data) + 91(key) + 1(type)
 	public byte[] pubKey;
 	public byte[] descriptor;

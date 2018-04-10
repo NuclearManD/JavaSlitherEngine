@@ -67,11 +67,19 @@ public class ClientIface {
 			n++;
 		}
 		try {
-			result = new Block(client.poll(request));
+			byte[] data=client.poll(request);
+			if(data[0]==0x55&&data.length==1)
+				return null;
+			result = new Block(data);
 			if(!result.verify()&&x>0)
 				result=null;
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Unable to download block #"+x+" due to a connection issue.\n", "Network Error", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Unable to download block #"+x+" due to a connection issue.", "Network Error", JOptionPane.ERROR_MESSAGE);
+			String message="";
+			for(StackTraceElement i:e.getStackTrace())
+				message+=i.toString()+'\n';
+			JOptionPane.showMessageDialog(null, message, e.toString(), JOptionPane.ERROR_MESSAGE);
 		}
 		return result;
 	}
@@ -86,9 +94,13 @@ public class ClientIface {
 		}
 		try {
 			result = new Block(client.poll(request));
-			if(!result.verify())
+			io.println(result.toString());
+			if(!result.verify()){
 				result=null;
+				io.println("Error verifying block");
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}
