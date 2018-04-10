@@ -8,7 +8,7 @@ import nuclear.slitherge.top.io;
 import nuclear.slitherio.uint256_t;
 
 public class SavedChain extends BlockchainBase{
-	BlockListFile chain;
+	protected BlockListFile chain;
 	BlockListFile daughters;
 	private Block current;
 	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);

@@ -3,6 +3,8 @@ package nuclear.blocks.client;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.swing.JOptionPane;
+
 import nuclear.blocks.node.NodeServer;
 import nuclear.slithercrypto.blockchain.Block;
 import nuclear.slithercrypto.blockchain.BlockchainBase;
@@ -69,6 +71,7 @@ public class ClientIface {
 			if(!result.verify()&&x>0)
 				result=null;
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Unable to download block #"+x+" due to a connection issue.", "Network Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return result;
 	}

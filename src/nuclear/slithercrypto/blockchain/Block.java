@@ -23,7 +23,7 @@ public class Block {
 	private byte[] version;			// 4 bytes
 	private long blockLen;			// 8 bytes
 	private long timestamp;			// 8 bytes
-	private byte[] data;			// ? bytes
+	protected byte[] data;			// ? bytes
 	private boolean valid=false;
 	Random r=new Random();
 	/*

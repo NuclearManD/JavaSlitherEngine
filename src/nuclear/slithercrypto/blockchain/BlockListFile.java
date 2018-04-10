@@ -9,9 +9,9 @@ import java.util.Iterator;
 import nuclear.slitherio.SlitherS;
 
 public class BlockListFile implements Iterable<Block>{
-	long[] blockStarts;
-	long[] blockLengths;
-	String dir;
+	protected long[] blockStarts;
+	protected long[] blockLengths;
+	protected String dir;
 	// pathname MUST end in '/'
 	public BlockListFile(String pathname) {
 		dir=pathname;
