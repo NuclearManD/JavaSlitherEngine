@@ -48,8 +48,11 @@ public class NodeServer extends Server {
 		byte[] response="OK".getBytes(StandardCharsets.UTF_8);
 		byte data[]=Arrays.copyOfRange(in,1,in.length);
 		if(cmd==CMD_ADD_PAIR) {
+			io.println("Pair received...");
 			DaughterPair pair=DaughterPair.deserialize(data);
-			if(pair.verify()) {
+			if(blockchain.getCoinBalance(pair.tr.getSender())<pair.tr.getTransactionCost()){
+				io.println(" > Error: Account would be overspending.");
+			}else if(pair.verify()) {
 				blockchain.addPair(pair);
 				io.println("Added Daughter Pair:");
 				io.println(pair.toString());
@@ -59,15 +62,18 @@ public class NodeServer extends Server {
 				log(" > ",pair.tr.toString());
 			}
 		}else if(cmd==CMD_ADD_TRANS) {
+			io.println("Transaction received...");
 			Transaction t=new Transaction(data);
-			if(t.verify()) {
+			if(blockchain.getCoinBalance(t.getSender())<t.getTransactionCost()){
+				io.println(" > Error: Account would be overspending.");
+			}else if(t.verify()) {
 				blockchain.addTransaction(t);
-				io.println("Added Transaction:");
+				io.print(" > Added Transaction:");
 				io.println(t.toString());
 			}else {
 				response="INVALID".getBytes(StandardCharsets.UTF_8);
-				log("CLIENT_ERR","Invalid Transaction: "+t.toString());
-				log(" > ",t.toString());
+				log(" > CLIENT_ERR","Invalid Transaction: "+t.toString());
+				log(" >> ",t.toString());
 			}
 		}else if(cmd==CMD_GET_BLOCK&&data.length==8){
 			int index=(int)SlitherS.bytesToLong(data);
