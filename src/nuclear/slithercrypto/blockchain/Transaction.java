@@ -105,7 +105,7 @@ public class Transaction {
 		return ECDSAKey.verify(Arrays.copyOfRange(descriptor, descriptor.length-SIG_LEN, descriptor.length), Arrays.copyOf(descriptor, descriptor.length-SIG_LEN), pubKey);
 	}
 	public byte[] getMeta() {
-		return Arrays.copyOfRange(descriptor, 33, 33+descriptor[32]);
+		return Arrays.copyOfRange(descriptor, 33, 33+((int)descriptor[32]&0xFF));
 	}
 	public void setMeta(byte[] meta){
 		descriptor[32]=(byte) meta.length;
