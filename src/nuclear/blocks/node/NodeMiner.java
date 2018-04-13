@@ -13,11 +13,19 @@ public class NodeMiner implements Runnable {
 	protected SlitherLog logger;
 	protected boolean solo;
 	private byte[] pubKey;
+	private int blocktime=30000*60;
 	public NodeMiner(BlockchainBase man,SlitherLog log, boolean SoloNetwork, byte[] pubKey) {
 		this.man=man;
 		logger=log;
 		solo=SoloNetwork;
 		this.pubKey=pubKey;
+	}
+	public NodeMiner(BlockchainBase man, SlitherLog log, boolean SoloNetwork, byte[] pubKey, int bt) {
+		this.man=man;
+		logger=log;
+		solo=SoloNetwork;
+		this.pubKey=pubKey;
+		this.blocktime=bt;
 	}
 	//@Override
 	public void run() {
@@ -31,14 +39,18 @@ public class NodeMiner implements Runnable {
 			time=System.currentTimeMillis()-time;
 			double hashrate=200000.0/(double)time;
 			logger.println("In "+time+"ms 200.000,0 hashes were executed: "+(int)hashrate+" kH/s");
-			uint256_t difficultyConstant=new uint256_t("113078212145816597093331040047546785012958969400039613319782796882727665664");
+			uint256_t difficultyConstant=new uint256_t("1157920892373161954235709850086879078532699846656405640394575840079131296399364");
 			uint256_t hashrate_256=uint256_t.fromBigInt(uint256_t.valueOf((long)hashrate*1000));// in Hashes/s, not kH/s
-			uint256_t difficulty_raw=uint256_t.fromBigInt(difficultyConstant.divide(hashrate_256));
+			uint256_t difficulty_raw=uint256_t.fromBigInt(difficultyConstant.divide(hashrate_256.multiply(new uint256_t(Integer.toString(blocktime)))));
 			logger.println("Raw Difficulty: "+difficulty_raw);
 			while(true){
 				if(man.getCurrent().numTransactions()==0){
 					logger.println("Waiting for transaction block...");
-					while(man.getCurrent().numTransactions()==0);
+					while(man.getCurrent().numTransactions()==0){
+						try{
+							Thread.sleep(50);
+						}catch(Exception e){}
+					}
 				}
 				logger.println("Setting up next block...");
 				man.getCurrent().setDifficulty(difficulty_raw);

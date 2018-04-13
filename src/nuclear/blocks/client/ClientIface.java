@@ -16,6 +16,7 @@ import nuclear.slithernet.Client;
 
 public class ClientIface {
 	protected Client client;
+	private boolean netErr;
 	public ClientIface(String host) throws IOException{
 		client=new Client(1152, host);
 	}
@@ -74,6 +75,7 @@ public class ClientIface {
 			if(!result.verify()&&x>0)
 				result=null;
 		} catch (IOException e) {
+			netErr=true;
 			JOptionPane.showMessageDialog(null, "Unable to download block #"+x+" due to a connection issue.\n", "Network Error", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			String message="";
@@ -105,11 +107,16 @@ public class ClientIface {
 		return result;
 	}
 	public int downloadBlockchain(BlockchainBase manager){
+		netErr=false;
 		manager.update();
 		int i=manager.length();
 		int n=0;
 		while(true){
 			Block block=downloadByIndex(i);
+			if(netErr){
+				netErr=false;
+				return -1;
+			}
 			i++;
 			if(manager.addBlock(block))
 				n++;
