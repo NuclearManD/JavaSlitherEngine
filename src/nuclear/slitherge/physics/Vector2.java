@@ -2,7 +2,7 @@ package nuclear.slitherge.physics;
 
 import nuclear.slitherge.top.Position;
 
-public class Vector2 {
+public class Vector2 implements Vector{
 	public double x;
 	public double y;
 	public Vector2() {

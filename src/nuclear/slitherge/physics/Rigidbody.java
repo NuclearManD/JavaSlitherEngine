@@ -1,40 +1,23 @@
 package nuclear.slitherge.physics;
 
-import nuclear.slitherge.top.Entity;
-import nuclear.slitherge.top.Universe;
 import nuclear.slitherge.top.io;
 
-public abstract class Rigidbody extends Collidable{
-	public Vector2 velocity;
-	private double tick_len=Universe.tick_len;
-	public Rigidbody(int dimt, double x, double y) {
-		super(dimt, x, y);
-		collider=new NullCollider();
-		velocity=new Vector2(0, 0);
+public class Rigidbody{
+	public Vector3 velocity, position;
+	public double mass;
+	private double dt=1.0/60.0;
+	public Rigidbody(Vector3 position) {
+		velocity=new Vector3(0, 0, 0);
+		this.position=position;
 	}
 
-	@Override
-	public void update() {
-		for (Entity e : Universe.myDim(this).getEntities(this)) {
-			if(e instanceof Rigidbody){
-				Vector2 collisionForce=((Rigidbody)e).getCollider().collide(collider,getVector());
-				if(collisionForce!=null){
-					addForce(collisionForce);
-					((Rigidbody)e).addForce(collisionForce.neg());
-				}
-			}
-		}
-		Vector2 pos=new Vector2(x,y);
-		pos=pos.add(velocity.mult(tick_len));
-		x=pos.x;
-		y=pos.y;
-		fixedUpdate();
+	public void update(World3D world) {
+		position=position.add(velocity.mult(dt));
+		fixedUpdate(world);
 	}
-	protected abstract void fixedUpdate();
+	protected void fixedUpdate(World3D world){}
 
-	public void addForce(Vector2 force){
-		io.println("Adding force "+force.toString()+" to velocity "+velocity.toString());
-		velocity=velocity.add(force.mult(tick_len));
-		io.println("New velocity: "+velocity.toString());
+	public void addForce(Vector3 force){
+		velocity=velocity.add(force.mult(dt).divide(mass));
 	}
 }

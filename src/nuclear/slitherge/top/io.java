@@ -40,4 +40,7 @@ public class io {
 	public static void print(char i) {
 		System.out.print(i);
 	}
+	public static void println(Object a) {
+		println(a.toString());
+	}
 }
