@@ -33,7 +33,11 @@ public abstract class Server implements Runnable{
 		try {
 			serve(tmpsok);
 		} catch (Exception e) {
+			onError(e);
 		}
+	}
+	protected void onError(Exception e) {
+		e.printStackTrace();
 	}
 	protected void serve(Socket client) throws Exception{
 		DataInputStream is=new DataInputStream(client.getInputStream());

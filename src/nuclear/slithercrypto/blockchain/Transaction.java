@@ -14,9 +14,6 @@ public class Transaction {
 	public static final byte TRANSACTION_ARBITRARY=0;
 	public static final byte TRANSACTION_SEND_COIN=1;
 	public static final byte TRANSACTION_SEND_GAS=2;
-	//public static final byte TRANSACTION_MAKE_PROGRAM=3;
-	//public static final byte TRANSACTION_EXECUTE_PROGRAM=4;
-	//public static final byte TRANSACTION_STORE_MESSAGE=5;
 	public static final byte TRANSACTION_STORE_FILE=6;
 	public static final int KEY_LEN = 91;
 	public static final int SIG_LEN = 74;

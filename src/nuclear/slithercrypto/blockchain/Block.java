@@ -68,13 +68,13 @@ public class Block {
 	 *  Checks if the block is valid
 	 *  @return true if block is valid, otherwise false
 	 */
-	synchronized public boolean verify() {
+	public boolean verify() {
 		byte[] packed=packNoHash();
 		valid=Arrays.equals(Crypt.SHA256(packed),hash);
 		valid=valid&&(difficulty.compareTo(uint256_t.make(hash))>0);
 		return valid;
 	}
-	synchronized public boolean mineOnce(byte[] publicKey) {
+	public boolean mineOnce(byte[] publicKey) {
 		if(!valid) {
 			miner=publicKey;
 			r.nextBytes(key);
@@ -88,7 +88,7 @@ public class Block {
 		byte[] packed=packNoHash();
 		hash=Crypt.SHA256(packed);
 	}
-	synchronized private byte[] packNoHash() {
+	private byte[] packNoHash() {
 		int length=HEADER_LENGTH+data.length-32;
 		byte[] out = new byte[length];
 		int n=0;
@@ -126,7 +126,7 @@ public class Block {
 		}
 		return out;
 	}
-	synchronized public byte[] pack() {
+	public byte[] pack() {
 		int length=HEADER_LENGTH+data.length;
 		byte[] out = new byte[length];
 		int n=0;
@@ -170,7 +170,7 @@ public class Block {
 		}
 		return out;
 	}
-	synchronized public byte[] getData() {
+	public byte[] getData() {
 		return data;
 	}
 	synchronized public void setData(byte[] data) {
@@ -182,17 +182,17 @@ public class Block {
 		this.difficulty=uint256_t.make(data);
 		valid=false;
 	}
-	synchronized public uint256_t getDifficulty() {
+	public uint256_t getDifficulty() {
 		return difficulty;
 	}
-	synchronized public byte[] getVersion() {
+	public byte[] getVersion() {
 		return version;
 	}
-	synchronized public boolean isComplete() {
+	public boolean isComplete() {
 		byte[] packed=pack();
 		return blockLen==packed.length;
 	}
-	synchronized public Transaction getTransaction(int index){
+	public Transaction getTransaction(int index){
 		index=index*Transaction.PACKED_LEN;
 		if(index>data.length)
 			return null;
@@ -210,12 +210,12 @@ public class Block {
 		}
 		data=tmp;
 	}
-	synchronized public byte[] getHash() {
+	public byte[] getHash() {
 		if(hash==null)
 			reHash();
 		return hash;
 	}
-	synchronized public int numTransactions() {
+	public int numTransactions() {
 		return data.length/Transaction.PACKED_LEN;
 	}
 	public String toString(){
@@ -236,6 +236,7 @@ public class Block {
 				mil=System.currentTimeMillis();
 			}
 		}
+		io.println("Done mining block.");
 	}
 	synchronized public void setLastBlockHash(byte[] lsblockhash) {
 		lsblock=lsblockhash;
