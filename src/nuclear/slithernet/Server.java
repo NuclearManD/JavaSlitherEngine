@@ -13,7 +13,7 @@ public abstract class Server implements Runnable{
 	protected Thread serverThread;
 	protected ServerSocket sok;
 	protected int port;
-	private Socket tmpsok;
+	protected Socket tmpsok;
 	public Server(int port){
 		this.port=port;
 	}
