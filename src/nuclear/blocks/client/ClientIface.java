@@ -1,6 +1,7 @@
 package nuclear.blocks.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -83,6 +84,35 @@ public class ClientIface {
 			JOptionPane.showMessageDialog(null, message, e.toString(), JOptionPane.ERROR_MESSAGE);
 		}
 		return result;
+	}
+	public ArrayList<Block> getBlocks(int index){
+		byte[] request=new byte[9];
+		request[0]=NodeServer.CMD_GET_BLOCKS;
+		int n=1;
+		for(byte i:SlitherS.longToBytes(index)){
+			request[n]=i;
+			n++;
+		}
+		try {
+			byte[] data=client.poll(request);
+			if(data[0]==0x55&&data.length==1){
+				return null;
+			}
+			ArrayList<Block> out=new ArrayList<Block>();
+			for(int i=0;i<data.length;){
+				long len=SlitherS.bytesToLong(Arrays.copyOfRange(data, i, i+4));
+				i+=4;
+				Block b=new Block(Arrays.copyOfRange(data, i, (int)(i+len)));
+				out.add(b);
+				i+=len;
+			}
+			return out;
+		} catch (IOException e) {
+			setNetErr(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public Block downloadDaughter(byte[] hash){
 		Block result=null;

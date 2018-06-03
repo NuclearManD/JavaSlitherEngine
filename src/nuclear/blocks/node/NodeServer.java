@@ -1,5 +1,6 @@
 package nuclear.blocks.node;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class NodeServer extends Server {
 	public static final byte CMD_GET_BLOCK = 2;
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
 	public static final byte CMD_GET_DAUGHTER = 3;
+	public static final byte CMD_GET_BLOCKS = 4;
 	BlockchainBase blockchain;
 	byte[] pubkey;
 	protected Thread minerThread;
@@ -71,6 +73,35 @@ public class NodeServer extends Server {
 				response="INVALID".getBytes(StandardCharsets.UTF_8);
 				log(" > CLIENT_ERR","Invalid Transaction: "+t.toString());
 				log(" >> ",t.toString());
+			}
+		}else if(cmd==CMD_GET_BLOCKS&&data.length==8){
+			int index=(int)SlitherS.bytesToLong(data);
+			int num = blockchain.length()-index;
+			boolean err=false;
+			if(num<1){
+				err=true;
+				log("","Client requested block "+index+" onward.  Those blocks do not exist.");
+				response=new byte[1];
+				response[0]=0x55;
+			}else if(num>32){
+				num=32; // send only 32 blocks at a time.
+			}
+			num+=index; // num is now the # of the last block
+			log("","Sending blocks "+index+"-"+num+" to client...");
+			if(!err){
+				ByteArrayOutputStream stream =new ByteArrayOutputStream();
+				for(int i=index;i<num;i++){
+					byte[] packed=blockchain.getBlockByIndex(i).pack();
+					try {
+						stream.write(SlitherS.longToBytes(packed.length));
+						stream.write(packed);
+					} catch (Exception e) {
+						e.printStackTrace();
+						response=new byte[1];
+						response[0]=0x55;
+					}
+				}
+				response=stream.toByteArray();
 			}
 		}else if(cmd==CMD_GET_BLOCK&&data.length==8){
 			int index=(int)SlitherS.bytesToLong(data);
