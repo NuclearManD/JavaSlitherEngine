@@ -42,17 +42,23 @@ public abstract class Server implements Runnable{
 	protected void serve(Socket client) throws Exception{
 		DataInputStream is=new DataInputStream(client.getInputStream());
 		DataOutputStream os=new DataOutputStream(client.getOutputStream());
-		long length=is.readLong();
-		byte in[]=new byte[(int)length];
-		if(length>0) {
-			is.readFully(in, 0, (int)length);
+		while(true){
+			try{
+				long length=is.readLong();
+				byte in[]=new byte[(int)length];
+				if(length>0) {
+					is.readFully(in, 0, (int)length);
+				}
+				byte[] o=easyServe(in);
+				os.writeLong(o.length);
+				os.write(o);
+				os.flush();
+				os.close();
+				is.close();
+			}catch(Exception e){
+				break;
+			}
 		}
-		byte[] o=easyServe(in);
-		os.writeLong(o.length);
-		os.write(o);
-		os.flush();
-		os.close();
-		is.close();
 		client.close();
 	}
 	protected byte[] easyServe(byte[] in) {
