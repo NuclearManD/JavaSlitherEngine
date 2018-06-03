@@ -3,6 +3,7 @@ package nuclear.slithercrypto.blockchain;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import nuclear.slitherge.top.io;
 import nuclear.slitherio.uint256_t;
 
 public abstract class BlockchainBase {
@@ -114,15 +115,21 @@ public abstract class BlockchainBase {
 		if(Arrays.equals(lsh, empty)&&length()==0)
 			return true;
 		Block last=getBlockByIndex(length()-1);
-		if(!Arrays.equals(lsh, last.getHash()))
+		if(!Arrays.equals(lsh, last.getHash())){
+			io.println("Hash error: hashes of blocks DO NOT match.");
 			return false;
+		}
 		int blockTime=(int) (block.getTimestamp()-last.getTimestamp());
 		if(blockTime<15){
+			io.println("Blocktime error: blocktime is less than 15.");
 			return false;
 		}
 		byte[] miner=block.getMiner();
-		if(getPriority(miner)<blockTime&&getPriority(miner)<100)
+		int priority=getPriority(miner);
+		if(priority>blockTime||priority==100){
+			io.println("Priority Error: miner priority is "+priority+" and block time is "+blockTime);
 			return false;  // Not registered or priority incorrect.
+		}
 		return true;
 	}
 	

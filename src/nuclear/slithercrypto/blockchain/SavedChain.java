@@ -49,8 +49,6 @@ public class SavedChain extends BlockchainBase{
 		if(isNext(block))
 			chain.addBlock(block);
 		else {
-			io.println("Block last hash is :           "+Base64.getEncoder().encodeToString(block.getLastHash()));
-			io.println("Block last hash does not match "+Base64.getEncoder().encodeToString(chain.get(chain.length()-1).getHash()));
 			return false;
 		}
 		getCurrent().setLastBlockHash(block.getHash());
