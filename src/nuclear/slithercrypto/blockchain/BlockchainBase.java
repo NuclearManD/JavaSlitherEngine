@@ -129,7 +129,7 @@ public abstract class BlockchainBase {
 		double V=0,L=0;
 		boolean registered=false;
 		int n=0;
-		for(int i=length();i>0&&i>length()-172800;i++){
+		for(int i=length()-1;i>0&&i>length()-172800;i++){
 			Block q=getBlockByIndex(i);
 			if(Arrays.equals(q.getMiner(), miner)){
 				registered=true;
