@@ -7,18 +7,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import nuclear.slithercrypto.ECDSAKey;
 import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
 import nuclear.slitherio.uint256_t;
 
 public class BlockChainManager extends BlockchainBase {
 	private Block current;
-	public static final Block genesis = new Block(new byte[91], new byte[32], new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"), new byte[0]);
 	ArrayList<Block> blocks=new ArrayList<Block>();
 	ArrayList<Block> daughters=new ArrayList<Block>();
 	public BlockChainManager() {
 		setup(blocks,daughters);
-		setCurrent(new Block(new byte[32],new byte[32],new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
+		setCurrent(new Block(new byte[32],new byte[32],new byte[0]));
 	}
 	synchronized public void addPair(DaughterPair pair) {
 		addTransaction(pair.tr);
@@ -41,26 +41,14 @@ public class BlockChainManager extends BlockchainBase {
 		}
 		return null;
 	}
-	synchronized public void commit(byte[] key) {
-		long hashes=0;
-		long mil=System.currentTimeMillis();
-		while(!getCurrent().mineOnce(key)) {
-			hashes++;
-			if(System.currentTimeMillis()-mil>3000) {
-				io.println(hashes/(System.currentTimeMillis()-mil)+" KH/s...");
-				hashes=0;
-				mil=System.currentTimeMillis();
-			}
-		}
+	synchronized public void commit(ECDSAKey key) {
+		getCurrent().sign(key);
 		commit();
-	}
-	synchronized public void addTransaction(Transaction t) {
-		getCurrent().addTransaction(t);
 	}
 	synchronized public boolean addBlock(Block block){
 		if(block==null)
 			return false;
-		if(block.verify()&&(blocks.size()==0||Arrays.equals(blocks.get(blocks.size()-1).getHash(),block.getLastHash())))
+		if(isNext(block))
 			blocks.add(block);
 		else
 			return false;
@@ -73,9 +61,12 @@ public class BlockChainManager extends BlockchainBase {
 	synchronized public Block getBlockByIndex(int index) {
 		return blocks.get(index);
 	}
-	synchronized public void commit() {
-		blocks.add(getCurrent());
-		setCurrent(new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),new byte[0]));
+	synchronized public boolean commit() {
+		if(addBlock(getCurrent()))
+				setCurrent(new Block(new byte[32],blocks.get(blocks.size()-1).getHash(),new byte[0]));
+		else
+			return false;
+		return true;
 	}
 	synchronized public Block getCurrent() {
 		return current;

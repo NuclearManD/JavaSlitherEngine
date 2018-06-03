@@ -16,7 +16,7 @@ public class BlockChainManagerTest {
 		DaughterPair pairTmp = Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), program_data, BlockChainManager.genesis.getHash(), "Troll");
 		man.addPair(pairTmp);
 		io.println("man.commit(); ...");
-		man.commit(key.getPublicKey());
+		man.commit(key);
 		io.println("Getting file 'Troll'...");
 		io.println("FILE CONTENTS:\n");
 		io.println(new String(man.readFile("Troll", key.getPublicKey()),StandardCharsets.UTF_8));

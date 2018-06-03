@@ -10,14 +10,16 @@ import nuclear.slitherio.uint256_t;
 
 public class Transaction {
 
-	public static final int TRANSACTION_LENGTH = 1024;
+	public static final int TRANSACTION_LENGTH = 512;
 	public static final byte TRANSACTION_ARBITRARY=0;
 	public static final byte TRANSACTION_SEND_COIN=1;
 	public static final byte TRANSACTION_SEND_GAS=2;
-	public static final byte TRANSACTION_STORE_FILE=6;
+	public static final byte TRANSACTION_REGISTER=3;
+	public static final byte TRANSACTION_STORE_FILE=4;
+	public static final byte TRANSACTION_REG_DNS = 5;
 	public static final int KEY_LEN = 91;
 	public static final int SIG_LEN = 74;
-	public static final int PACKED_LEN = 1116;//1024(data) + 91(key) + 1(type)
+	public static final int PACKED_LEN = 604;//512(data) + 91(key) + 1(type)
 	public byte[] pubKey;
 	public byte[] descriptor;
 	public byte type;
@@ -36,8 +38,8 @@ public class Transaction {
 	public static DaughterPair makeFile(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
 		ECDSAKey key=new ECDSAKey(publickey,priKey);
 		byte data[]=new byte[TRANSACTION_LENGTH];
-		Block tmp=new Block(publickey,lastBlockHash,new uint256_t("771947261582107967251640281103336579920368336826869405186543784860581888"),program_data);
-		tmp.CPUmine(publickey);
+		Block tmp=new Block(publickey,lastBlockHash,program_data);
+		tmp.sign(new ECDSAKey(publickey,priKey));
 		int n=0;
 		for(byte i:tmp.getHash()) {
 			data[n]=i;
@@ -78,6 +80,17 @@ public class Transaction {
 			n++;
 		}
 		return new Transaction(sender,data,TRANSACTION_SEND_COIN);
+	}
+	public static Transaction register(byte[] registrar, byte[] priKey) {
+		byte data[]=new byte[TRANSACTION_LENGTH];
+		int n=data.length-SIG_LEN;
+		ECDSAKey key=new ECDSAKey(registrar,priKey);
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
+		for(byte i:sig) {
+			data[n]=i;
+			n++;
+		}
+		return new Transaction(registrar,data,TRANSACTION_REGISTER);
 	}
 
 	public byte[] pack() {

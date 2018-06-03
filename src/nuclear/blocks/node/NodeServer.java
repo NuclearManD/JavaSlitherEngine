@@ -24,7 +24,6 @@ public class NodeServer extends Server {
 	BlockchainBase blockchain;
 	byte[] pubkey;
 	protected Thread minerThread;
-	protected NodeMiner minerObject;
 	public NodeServer(byte[] Key) {
 		super(1152);
 		io.println("Starting...");
@@ -34,8 +33,6 @@ public class NodeServer extends Server {
 		io.println("Node public key: "+Base64.getEncoder().encodeToString(Key));
 		io.println("Node balance: "+blockchain.getCoinBalance(Key)+" KiB ");
 		pubkey=Key;
-		minerObject=new NodeMiner(blockchain,new CLILogger(),true,pubkey);
-		minerThread=new Thread(minerObject);
 		try {
 			minerThread.start();
 			start();

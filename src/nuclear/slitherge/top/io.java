@@ -43,4 +43,14 @@ public class io {
 	public static void println(Object a) {
 		println(a.toString());
 	}
+	public static void waitMillis(int i) {
+		long time=System.currentTimeMillis()+i;
+		while(time>System.currentTimeMillis()){
+			try {
+				Thread.sleep(time-System.currentTimeMillis());
+			} catch (InterruptedException e) {
+			}
+		}
+		
+	}
 }

@@ -18,7 +18,6 @@ public class BlockListFileTest {
 			int index=list.addBlock(BlockChainManager.genesis);
 			io.println("Reading Block...");
 			b=list.get(index);
-			b.reHash();
 			if(Arrays.equals(b.getHash(), BlockChainManager.genesis.getHash()))
 				io.println("Success!");
 			else
