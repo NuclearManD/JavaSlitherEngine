@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 
 import nuclear.slitherge.top.io;
 
-@SuppressWarnings("unused")
 public abstract class Server implements Runnable{
 	protected Thread serverThread;
 	protected ServerSocket sok;
@@ -25,7 +24,7 @@ public abstract class Server implements Runnable{
 				new Thread(this).start();
 			}   
 			catch (Exception e) {
-				System.out.println(e);
+				onError(e);
 			}
 		}
 	}
@@ -53,9 +52,8 @@ public abstract class Server implements Runnable{
 				os.writeLong(o.length);
 				os.write(o);
 				os.flush();
-				os.close();
-				is.close();
 			}catch(Exception e){
+				onError(e);
 				break;
 			}
 		}

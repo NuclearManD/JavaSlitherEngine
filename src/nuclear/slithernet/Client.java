@@ -29,7 +29,6 @@ public class Client {
 				outStream=new DataOutputStream(socket.getOutputStream());
 				connected=true;
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
