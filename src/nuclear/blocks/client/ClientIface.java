@@ -76,7 +76,6 @@ public class ClientIface {
 				result=null;
 		} catch (IOException e) {
 			setNetErr(true);
-			JOptionPane.showMessageDialog(null, "Unable to download block #"+x+" due to a connection issue.\n", "Network Error", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			String message="";
 			for(StackTraceElement i:e.getStackTrace())
