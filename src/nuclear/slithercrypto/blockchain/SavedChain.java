@@ -17,9 +17,6 @@ public class SavedChain extends BlockchainBase{
 		daughters=new BlockListFile(storeDir+"/daugt");
 		setup(chain,daughters);
 		setCurrent(new Block(new byte[32],new byte[32],new byte[0]));
-		if(length()==0){
-			chain.addBlock(genesis);
-		}
 	}
 
 	synchronized public void addPair(DaughterPair pair) {

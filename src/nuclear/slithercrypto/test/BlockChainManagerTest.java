@@ -13,7 +13,7 @@ public class BlockChainManagerTest {
 		io.println("Creating file...");
 		BlockChainManager man=new BlockChainManager();
 		byte[] program_data="Hello World!".getBytes(StandardCharsets.UTF_8);
-		DaughterPair pairTmp = Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), program_data, BlockChainManager.genesis.getHash(), "Troll");
+		DaughterPair pairTmp = Transaction.makeFile(key.getPublicKey(), key.getPrivateKey(), program_data, BlockChainManager.getBlockByIndex(0).getHash(), "Troll");
 		man.addPair(pairTmp);
 		io.println("man.commit(); ...");
 		man.commit(key);

@@ -28,7 +28,7 @@ public class Block {
 	 */
 	public Block(byte[] packed) {
 		if(packed.length<HEADER_LENGTH){
-			io.println("ERROR : block size error");
+			io.println("ERROR : block size error ("+packed.length+" bytes)");
 		}
 		miner=Arrays.copyOfRange(packed, 0, 91);
 		lsblock=Arrays.copyOfRange(packed, 91, 123);
