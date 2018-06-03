@@ -101,8 +101,8 @@ public class ClientIface {
 			}
 			ArrayList<Block> out=new ArrayList<Block>();
 			for(int i=0;i<data.length;){
-				long len=SlitherS.bytesToLong(Arrays.copyOfRange(data, i, i+4));
-				i+=4;
+				long len=SlitherS.bytesToLong(Arrays.copyOfRange(data, i, i+8));
+				i+=8;
 				Block b=new Block(Arrays.copyOfRange(data, i, (int)(i+len)));
 				out.add(b);
 				i+=len;
