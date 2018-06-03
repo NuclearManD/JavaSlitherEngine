@@ -14,31 +14,28 @@ public class Client {
 	private String host;
 	private int port;
 	public int timeout=5000;
-	boolean connected=false;
 	public Client(int port, String host){
 		this.host=host;
 		this.port=port;
 		connect();
 	}
 	public void connect() {
-		if(!connected){
+		if(socket==null||(!socket.isConnected())||socket.isClosed()){
 			socket=new Socket();
 			try {
 				socket.connect(new InetSocketAddress(host, port),timeout);
 				inStream=new DataInputStream(socket.getInputStream());
 				outStream=new DataOutputStream(socket.getOutputStream());
-				connected=true;
 			} catch (IOException e) {
 			}
 		}
 	}
 	public void disconnect(){
-		if(connected){
+		if(socket.isConnected()){
 			try {
 				socket.close();
 			} catch (IOException e) {
 			}
-			connected=false;
 		}
 	}
 	public String ezPoll(String in) throws IOException {
@@ -46,7 +43,15 @@ public class Client {
 	}
 	public byte[] poll(byte[] in) throws IOException {
 		connect();
-		outStream.writeLong(in.length);
+		if(!socket.isConnected())
+			return null;
+		try{
+			outStream.writeLong(in.length);
+		}catch(IOException e){
+			socket.close();
+			connect();
+			outStream.writeLong(in.length);
+		}
 		outStream.write(in);
 		outStream.flush();
 		long len=inStream.readLong();

@@ -77,6 +77,7 @@ public class ClientIface {
 				result=null;
 		} catch (IOException e) {
 			setNetErr(true);
+			e.printStackTrace();
 		} catch (Exception e) {
 			String message="";
 			for(StackTraceElement i:e.getStackTrace())
@@ -158,5 +159,8 @@ public class ClientIface {
 	}
 	public void setNetErr(boolean netErr) {
 		this.netErr = netErr;
+	}
+	public void close() {
+		client.disconnect();
 	}
 }
