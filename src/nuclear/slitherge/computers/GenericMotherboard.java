@@ -6,8 +6,8 @@ import nuclear.slitherge.top.Position;
 public class GenericMotherboard extends Motherboard {
 
 	public GenericMotherboard(double x, double y, ComputerInterfaceHandler ihandler) {
-		super(x, y, ihandler);
-		CPU=new CPU_BIS(ihandler);
+		super(x, y);
+		CPU=new CPU_BIS(0,0,100);
 	}
 
 	@Override

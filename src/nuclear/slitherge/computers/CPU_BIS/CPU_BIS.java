@@ -21,14 +21,8 @@ public class CPU_BIS extends CPU {
 	 *  6 SP
 	 *  7 PC
 	 */
-	public CPU_BIS(ComputerInterfaceHandler i, double x, double y, int ticks_per_update) {
-		super(i, x, y, ticks_per_update);
-		registers=new short[8];
-		reset();
-	}
-
-	public CPU_BIS(ComputerInterfaceHandler i) {
-		super(i);
+	public CPU_BIS(double x, double y, int ticks_per_update) {
+		super(x, y, ticks_per_update);
 		registers=new short[8];
 		reset();
 	}

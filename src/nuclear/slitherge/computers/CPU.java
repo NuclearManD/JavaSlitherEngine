@@ -7,34 +7,22 @@ import nuclear.slitherge.top.io;
 public abstract class CPU extends Thing {
 	private int tick_count;
 	private ComputerInterfaceHandler iface;
-	public CPU(ComputerInterfaceHandler i, int ticks_per_update){
-		super(0, 0);
-		tick_count=ticks_per_update;
-		name=getName();
-		iface=i;
-	}
-	public CPU(ComputerInterfaceHandler i, double x, double y, int ticks_per_update){
+	public CPU(double x, double y, int ticks_per_update){
 		super(x, y);
 		tick_count=ticks_per_update;
 		name=getName();
-		iface=i;
 	}
-	public CPU(ComputerInterfaceHandler i, double x, double y){
+	public CPU(double x, double y){
 		super(x, y);
 		name=getName();
 		tick_count=100;
-		iface=i;
-	}
-	public CPU(ComputerInterfaceHandler i){
-		super(0, 0);
-		tick_count=100;
-		name=getName();
-		iface=i;
 	}
 	public abstract void reset();
 	public abstract void tick();
 	public abstract String getName();
 	public void run(){
+		if(iface==null)
+			return;
 		for(int i=0;i<tick_count;i++)
 			tick();
 	}

@@ -3,7 +3,7 @@ package nuclear.slitherge.computers;
 import nuclear.slitherge.top.Entity;
 
 public abstract class ComputerCase extends Entity {
-	protected Motherboard mobo;
+	public Motherboard mobo;
 	protected boolean isOn=false;
 	public ComputerCase(int dimt,double x2, double y2, Motherboard m) {
 		super(dimt,x2, y2);

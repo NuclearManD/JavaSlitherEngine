@@ -22,8 +22,8 @@ public class GenericComputerCase extends ComputerCase {
 	public void onReceiveMessage(String msg,Entity src) {
 		if(msg.equalsIgnoreCase("computer on")){
 			isOn=true;
+			sendMessage("A computer turns on nearby.");
 		}
-		sendMessage("A computer turns on nearby.");
 	}
 
 }

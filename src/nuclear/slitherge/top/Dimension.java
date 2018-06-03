@@ -19,15 +19,7 @@ public class Dimension {
 		for(int x=0;x<entities.size();x++){
 			Entity e =entities.get(x);
 			e.dimension=id;
-			if(e.getHealth()<1){
-				if(e==Universe.player){
-					io.println("You have died.  You have "+e.health+" health at death.");
-					System.exit(0);
-				}
-				entities.remove(x);
-			}else{
-				e.update();
-			}
+			e.update();
 		}
 		for(int x=0;x<things.size();x++){
 			things.get(x).update();
