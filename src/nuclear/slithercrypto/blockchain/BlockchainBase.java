@@ -98,6 +98,17 @@ public abstract class BlockchainBase {
 		}
 		return out;
 	}
+	public ArrayList<Transaction> getPagesOf(byte[] adr){
+		ArrayList<Transaction> out=new ArrayList<Transaction>();
+		for(Block i:chain) {
+			for(int j=0;j<i.numTransactions();j++) {
+				Transaction t=i.getTransaction(j);
+				if(t.type==Transaction.TRANSACTION_STORE_PAGE&&Arrays.equals(t.pubKey,adr))
+					out.add(t);
+			}
+		}
+		return out;
+	}
 	public Block getBlockByHash(byte[] hash){
 		for(int i=0;i<length();i++){
 			Block b=getBlockByIndex(i);
