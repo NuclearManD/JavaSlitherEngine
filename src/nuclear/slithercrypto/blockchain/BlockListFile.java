@@ -1,5 +1,6 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,13 +39,9 @@ public class BlockListFile implements Iterable<Block>{
 		blockLengths=new long[(int) (len/16)];
 		for(int i=0;i<len/16;i++) {
 			byte[] b=new byte[8];
-			for(int x=0;x<8;x++) {
-				b[x]=(byte)chainData.read();
-			}
+			chainData.read(b);
 			blockStarts[i]=SlitherS.bytesToLong(b);
-			for(int x=0;x<8;x++) {
-				b[x]=(byte)chainData.read();
-			}
+			chainData.read(b);
 			blockLengths[i]=SlitherS.bytesToLong(b);
 		}
 		chainData.close();
@@ -52,15 +49,16 @@ public class BlockListFile implements Iterable<Block>{
 	synchronized public int addBlock(Block block){
 		byte[] packed=block.pack();
 		try {
+			long len=new File(dir+".dat").length();
 			FileOutputStream chainData=new FileOutputStream(dir+".lk",true);
-			FileOutputStream chainBlocks=new FileOutputStream(dir+".dat",true);
-			chainData.write(SlitherS.longToBytes(chainBlocks.getChannel().size()));
+			BufferedOutputStream chainBlocks=new BufferedOutputStream(new FileOutputStream(dir+".dat",true));
+			chainData.write(SlitherS.longToBytes(len));
 			chainData.write(SlitherS.longToBytes(packed.length));
 			long[] tbs=blockStarts;
 			long[] tbl=blockLengths;
 			blockStarts=Arrays.copyOf(tbs, tbs.length+1);
 			blockLengths=Arrays.copyOf(tbl, tbl.length+1);
-			blockStarts[tbs.length]=chainBlocks.getChannel().size();
+			blockStarts[tbs.length]=len;
 			blockLengths[tbl.length]=packed.length;
 			chainData.close();
 			chainBlocks.write(packed);

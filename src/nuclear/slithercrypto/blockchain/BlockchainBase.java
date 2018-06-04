@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import nuclear.slitherge.top.io;
-import nuclear.slitherio.uint256_t;
 
 public abstract class BlockchainBase {
 	private Block current;
@@ -145,30 +144,26 @@ public abstract class BlockchainBase {
 		return true;
 	}
 	
+	ArrayList<Verifier> verifierCache=new ArrayList<Verifier>();
+	
 	// returns priority between 15 and 60.  If the address is not registered then returns 100.
 	public int getPriority(byte[] miner) {
 		double V=0,L=0;
-		boolean registered=false;
-		int n=0;
-		for(int i=length()-1;i>=0&&i>length()-172800;i--){
-			Block q=getBlockByIndex(i);
-			if(Arrays.equals(q.getMiner(), miner)){
-				registered=true;
-				V++;
-				if(n<1024)
-					L++;
-				n++;
+		Verifier v=null;
+		for(Verifier i:verifierCache){
+			if(i.equals(miner)){
+				v=i;
+				break;
 			}
-			else
-				for(int j=0;j<q.numTransactions();j++){
-					Transaction t=q.getTransaction(j);
-					if(t.type==Transaction.TRANSACTION_REGISTER&&t.verify()&&Arrays.equals(t.getSender(), miner)){
-						registered=true;
-					}
-				}
 		}
-		if(!registered)
-			return 100;
+		if(v==null){
+			v=new Verifier(miner, this);
+			if(!v.registered())
+				return 100;
+			verifierCache.add(v);
+		}
+		V=v.getV();
+		L=v.getL();
 		Block q=getBlockByIndex(length()-1);
 		double a=V*q.numTransactions()/8640000.0;
 		double r=-4/Math.pow(2, a*2.0)+4/Math.pow(2, a)+1/(L/1024.0+1);

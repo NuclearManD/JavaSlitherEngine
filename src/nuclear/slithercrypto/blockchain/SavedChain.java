@@ -2,11 +2,6 @@ package nuclear.slithercrypto.blockchain;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
-
-
-import nuclear.slitherge.top.io;
-import nuclear.slitherio.uint256_t;
 
 public class SavedChain extends BlockchainBase{
 	protected BlockListFile chain;
