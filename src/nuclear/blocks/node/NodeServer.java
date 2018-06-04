@@ -12,7 +12,6 @@ import nuclear.slithercrypto.blockchain.DaughterPair;
 import nuclear.slithercrypto.blockchain.SavedChain;
 import nuclear.slithercrypto.blockchain.Transaction;
 import nuclear.slitherge.top.io;
-import nuclear.slitherio.CLILogger;
 import nuclear.slitherio.SlitherS;
 import nuclear.slithernet.Server;
 

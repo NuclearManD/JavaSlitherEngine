@@ -8,7 +8,6 @@ import nuclear.slithercrypto.Crypt;
 import nuclear.slithercrypto.ECDSAKey;
 import nuclear.slitherge.top.io;
 import nuclear.slitherio.SlitherS;
-import nuclear.slitherio.uint256_t;
 
 public class Block {
 	public static final int HEADER_LENGTH = 217;

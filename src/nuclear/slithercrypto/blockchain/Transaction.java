@@ -4,9 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
+import nuclear.slithercrypto.Crypt;
 import nuclear.slithercrypto.ECDSAKey;
 import nuclear.slitherio.SlitherS;
-import nuclear.slitherio.uint256_t;
 
 public class Transaction {
 
@@ -17,6 +17,8 @@ public class Transaction {
 	public static final byte TRANSACTION_REGISTER=3;
 	public static final byte TRANSACTION_STORE_FILE=4;
 	public static final byte TRANSACTION_REG_DNS = 5;
+	public static final byte TRANSACTION_STORE_PAGE=6;
+	public static final byte TRANSACTION_STORE_ENCRYPTED=7;
 	public static final int KEY_LEN = 91;
 	public static final int SIG_LEN = 74;
 	public static final int PACKED_LEN = 604;//512(data) + 91(key) + 1(type)
@@ -59,6 +61,57 @@ public class Transaction {
 			n++;
 		}
 		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_FILE),tmp);
+	}
+	public static DaughterPair makePage(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta) {
+		ECDSAKey key=new ECDSAKey(publickey,priKey);
+		byte data[]=new byte[TRANSACTION_LENGTH];
+		Block tmp=new Block(publickey,lastBlockHash,program_data);
+		tmp.sign(new ECDSAKey(publickey,priKey));
+		int n=0;
+		for(byte i:tmp.getHash()) {
+			data[n]=i;
+			n++;
+		}
+		byte[] byte_meta=meta.getBytes(StandardCharsets.UTF_8);
+		data[32]=(byte) byte_meta.length;
+		n=33;
+		for(byte i:byte_meta){
+			data[n]=i;
+			n++;
+		}
+		n=data.length-SIG_LEN;
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
+		for(byte i:sig) {
+			data[n]=i;
+			n++;
+		}
+		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_PAGE),tmp);
+	}
+	public static DaughterPair makeEncrypted(byte[] publickey,byte[] priKey, byte[] program_data,byte[] lastBlockHash,String meta, String password) {
+		ECDSAKey key=new ECDSAKey(publickey,priKey);
+		byte data[]=new byte[TRANSACTION_LENGTH];
+		program_data=Crypt.EncryptAES(program_data, password);
+		Block tmp=new Block(publickey,lastBlockHash,program_data);
+		tmp.sign(new ECDSAKey(publickey,priKey));
+		int n=0;
+		for(byte i:tmp.getHash()) {
+			data[n]=i;
+			n++;
+		}
+		byte[] byte_meta=meta.getBytes(StandardCharsets.UTF_8);
+		data[32]=(byte) byte_meta.length;
+		n=33;
+		for(byte i:byte_meta){
+			data[n]=i;
+			n++;
+		}
+		n=data.length-SIG_LEN;
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
+		for(byte i:sig) {
+			data[n]=i;
+			n++;
+		}
+		return new DaughterPair(new Transaction(publickey,data,TRANSACTION_STORE_ENCRYPTED),tmp);
 	}
 	public static Transaction sendCoins(byte[] sender, byte[] receiver, byte[] priKey,double amount) {
 		byte data[]=new byte[TRANSACTION_LENGTH];
