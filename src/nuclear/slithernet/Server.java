@@ -1,6 +1,7 @@
 package nuclear.slithernet;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -52,6 +53,8 @@ public abstract class Server implements Runnable{
 				os.writeLong(o.length);
 				os.write(o);
 				os.flush();
+			}catch(EOFException e){
+				break; // Quietly break, the connection just died.
 			}catch(Exception e){
 				onError(e);
 				break;
