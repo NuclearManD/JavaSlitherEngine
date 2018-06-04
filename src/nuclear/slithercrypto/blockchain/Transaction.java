@@ -146,6 +146,25 @@ public class Transaction {
 		return new Transaction(registrar,data,TRANSACTION_REGISTER);
 	}
 
+	public static Transaction takeDomain(byte[] registrar, byte[] priKey, String g00n) {
+		ECDSAKey key=new ECDSAKey(registrar,priKey);
+		byte data[]=new byte[TRANSACTION_LENGTH];
+		byte[] byte_meta=g00n.getBytes(StandardCharsets.UTF_8);
+		data[32]=(byte) byte_meta.length;
+		int n=33;
+		for(byte i:byte_meta){
+			data[n]=i;
+			n++;
+		}
+		n=data.length-SIG_LEN;
+		byte[] sig=key.sign(Arrays.copyOf(data, TRANSACTION_LENGTH-SIG_LEN));
+		for(byte i:sig) {
+			data[n]=i;
+			n++;
+		}
+		return new Transaction(registrar,data,TRANSACTION_REG_DNS);
+	}
+
 	public byte[] pack() {
 		byte[] out = new byte[PACKED_LEN];
 		int n=0;

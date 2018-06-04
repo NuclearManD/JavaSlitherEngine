@@ -1,5 +1,6 @@
 package nuclear.slithercrypto.blockchain;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -172,5 +173,17 @@ public abstract class BlockchainBase {
 		double a=V*q.numTransactions()/8640000.0;
 		double r=-4/Math.pow(2, a*2.0)+4/Math.pow(2, a)+1/(L/1024.0+1);
 		return (int)(30.0/r);
+	}
+	public byte[] readPage(String path, byte[] address) {
+		for(int j=length()-1;j>=0;j--) {
+			Block block=getBlockByIndex(j);
+			for(int i=block.numTransactions()-1;i>=0;i--) {
+				Transaction t=block.getTransaction(i);
+				String tmeta=new String(t.getMeta(),StandardCharsets.UTF_8);
+				if(t.type==Transaction.TRANSACTION_STORE_PAGE&&Arrays.equals(t.pubKey, address)&&tmeta.equals(path))
+					return getDaughter(Arrays.copyOf(t.descriptor,32)).getData();
+			}
+		}
+		return null;
 	}
 }

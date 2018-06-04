@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import nuclear.slitherge.top.io;
@@ -54,6 +55,8 @@ public abstract class Server implements Runnable{
 				os.write(o);
 				os.flush();
 			}catch(EOFException e){
+				break; // Quietly break, the connection just died.
+			}catch(SocketException e){
 				break; // Quietly break, the connection just died.
 			}catch(Exception e){
 				onError(e);
