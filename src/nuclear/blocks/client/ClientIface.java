@@ -18,7 +18,7 @@ import nuclear.slithernet.Client;
 public class ClientIface {
 	protected Client client;
 	private boolean netErr;
-	public ClientIface(String host) throws IOException{
+	public ClientIface(String host){
 		client=new Client(1152, host);
 	}
 	public boolean uploadPair(DaughterPair pair){
@@ -96,16 +96,17 @@ public class ClientIface {
 		}
 		try {
 			byte[] data=client.poll(request);
-			if(data[0]==0x55&&data.length==1){
+			if(data==null)
 				return null;
-			}
 			ArrayList<Block> out=new ArrayList<Block>();
-			for(int i=0;i<data.length;){
-				long len=SlitherS.bytesToLong(Arrays.copyOfRange(data, i, i+8));
-				i+=8;
-				Block b=new Block(Arrays.copyOfRange(data, i, (int)(i+len)));
-				out.add(b);
-				i+=len;
+			if(data[0]!=0x55||data.length!=1){
+				for(int i=0;i<data.length;){
+					long len=SlitherS.bytesToLong(Arrays.copyOfRange(data, i, i+8));
+					i+=8;
+					Block b=new Block(Arrays.copyOfRange(data, i, (int)(i+len)));
+					out.add(b);
+					i+=len;
+				}
 			}
 			return out;
 		} catch (IOException e) {
@@ -142,17 +143,27 @@ public class ClientIface {
 		int i=manager.length();
 		int n=0;
 		while(true){
-			Block block=downloadByIndex(i);
+			ArrayList<Block> blocks=getBlocks(i);
+			if(blocks==null)
+				return -1;
+			if(blocks.isEmpty())
+				break;
 			if(isNetErr()){
 				setNetErr(false);
 				return -1;
 			}
-			i++;
-			if(manager.addBlock(block))
-				n++;
-			else
-				return n;
+			for(Block block:blocks){
+				if(manager.addBlock(block)){
+					n++;
+					i++;
+				}else
+					break;
+			}
+			int s=blocks.size();
+			if(s<32)
+				break;
 		}
+		return n;
 	}
 	public boolean isNetErr() {
 		return netErr;
