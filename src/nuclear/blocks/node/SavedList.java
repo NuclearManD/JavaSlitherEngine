@@ -60,5 +60,16 @@ public class SavedList {
 	public void remove(int i) throws Exception{
 		throw new Exception("Not a Feature!");
 	}
+	public byte[] serialize() {
+		try{
+			FileInputStream file=new FileInputStream(fn);
+			byte[] o=new byte[file.available()];
+			file.read(o, 0, o.length);
+			file.close();
+			return o;
+		}catch(Exception e){
+			return new byte[0];
+		}
+	}
 
 }

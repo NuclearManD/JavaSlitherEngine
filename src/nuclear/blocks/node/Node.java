@@ -19,7 +19,7 @@ public class Node implements Runnable {
 			key=new ECDSAKey();
 			key.save(keypath);
 		}
-		server=new NodeServer(key.getPublicKey());
+		server=new NodeServer(key);
 	}
 	public void run() {
 		

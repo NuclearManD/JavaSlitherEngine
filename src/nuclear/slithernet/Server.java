@@ -50,7 +50,7 @@ public abstract class Server implements Runnable{
 				if(length>0) {
 					is.readFully(in, 0, (int)length);
 				}
-				byte[] o=easyServe(in);
+				byte[] o=easyServe(in,client.getInetAddress().getHostAddress());
 				os.writeLong(o.length);
 				os.write(o);
 				os.flush();
@@ -64,6 +64,9 @@ public abstract class Server implements Runnable{
 			}
 		}
 		client.close();
+	}
+	protected byte[] easyServe(byte[] in, String hostAddress) {
+		return easyServe(in);
 	}
 	protected byte[] easyServe(byte[] in) {
 		return easyServe(new String(in,StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
