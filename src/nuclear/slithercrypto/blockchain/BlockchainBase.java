@@ -40,37 +40,16 @@ public abstract class BlockchainBase {
 	synchronized public void setCurrent(Block current) {
 		this.current = current;
 	}
+	ArrayList<BalanceCache> balCache=new ArrayList<BalanceCache>();
 	public double getCoinBalance(byte[] adr){
-		if(adr.length!=91)
-			return 0;
-		if(length()==0)
-			return 0;
-		double out=0;
-		if(Arrays.equals(getBlockByIndex(0).getMiner(),adr))
-			out=1000;
-		for(Block i:chain){
-			if(!i.verify())
-				continue;
-			
-			for(int x=0;x<i.numTransactions();x++){
-				Transaction t=i.getTransaction(x);
-				if(!t.verify())
-					continue;
-				if(t.type==Transaction.TRANSACTION_SEND_COIN){
-					if(Arrays.equals(t.pubKey,adr))
-						out-=t.getCoinsSent();
-					if(Arrays.equals(t.getReceiver(), adr))
-						out+=t.getCoinsSent();
-				}
-				if(Arrays.equals(t.pubKey,adr))
-					out-=t.getTransactionCost();
+		for(BalanceCache i:balCache){
+			if(i.equals(adr)){
+				return i.getBalance();
 			}
-			if(Arrays.equals(adr,i.getMiner()))
-				out+=i.getCost();
 		}
-		if(getPriority(adr)!=100)
-			out-=1000;
-		return out;
+		BalanceCache v=new BalanceCache(adr, this);
+		balCache.add(v);
+		return v.getBalance();
 	}
 	public boolean isActive(byte[] adr) {
 		for(Block i:chain) {
