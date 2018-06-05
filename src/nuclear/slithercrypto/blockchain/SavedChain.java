@@ -72,4 +72,9 @@ public class SavedChain extends BlockchainBase{
 		chain.update();
 		daughters.update();
 	}
+
+	@Override
+	public void addDaughter(Block d) {
+		daughters.addBlock(d);
+	}
 }

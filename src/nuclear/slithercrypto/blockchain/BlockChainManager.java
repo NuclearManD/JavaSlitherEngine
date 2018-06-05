@@ -133,4 +133,8 @@ public class BlockChainManager extends BlockchainBase {
 		}
 		return out;
 	}
+	@Override
+	public void addDaughter(Block d) {
+		daughters.add(d);
+	}
 }

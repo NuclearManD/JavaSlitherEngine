@@ -1,12 +1,7 @@
 package nuclear.blocks.client;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import javax.swing.JOptionPane;
-
-import nuclear.blocks.node.NodeServer;
 import nuclear.blocks.node.SavedList;
 import nuclear.slithercrypto.blockchain.Block;
 import nuclear.slithercrypto.blockchain.BlockchainBase;

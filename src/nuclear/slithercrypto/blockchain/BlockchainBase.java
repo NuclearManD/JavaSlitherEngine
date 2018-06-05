@@ -11,11 +11,13 @@ public abstract class BlockchainBase {
 	public abstract void addPair(DaughterPair pair);
 	public abstract byte[] readFile(String meta,byte[] pubAdr);
 	public abstract Block getDaughter(byte[] hash);
+	public abstract void addDaughter(Block d);
 	Iterable<Block> chain,daughters;
 	protected void setup(Iterable<Block> chain,Iterable<Block> daughters){
 		this.chain=chain;
 		this.daughters=daughters;
 	}
+	
 	synchronized public boolean addTransaction(Transaction t) {
 		if(!t.verify())
 			return false;
