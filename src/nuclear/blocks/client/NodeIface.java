@@ -6,12 +6,18 @@ import nuclear.blocks.node.NodeServer;
 import nuclear.slithercrypto.blockchain.Block;
 import nuclear.slithercrypto.blockchain.BlockchainBase;
 import nuclear.slithercrypto.blockchain.Transaction;
+import nuclear.slitherge.top.io;
+import nuclear.slitherio.SlitherLog;
 
-public class NodeIface extends MultiClientIface{
+public class NodeIface extends MultiClientIface implements Runnable{
 	int lastBlock=-1;
-	public NodeIface(String[] hosts) {
+	BlockchainBase bc;
+	SlitherLog log;
+	public NodeIface(String[] hosts, BlockchainBase b, SlitherLog l) {
 		super(hosts);
 		reportNode();
+		bc=b;
+		log=l;
 	}
 
 	public void reportNode() {
@@ -40,6 +46,15 @@ public class NodeIface extends MultiClientIface{
 			}
 		}
 		lastBlock=bc.length()-1;
+	}
+
+	public void run() {
+		while(true){
+			io.waitMillis(5000);
+			log.println("Syncing with the remote(s)...");
+			sync(bc);
+			log.println("Done.");
+		}
 	}
 
 }
