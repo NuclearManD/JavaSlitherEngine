@@ -53,7 +53,7 @@ public class NodeServer extends Server implements Runnable{
 			io.println("Could not bind port");
 		}
 	}
-	public byte[] easyServe(byte[] in) {
+	public byte[] easyServe(byte[] in, String ip) {
 		byte cmd=in[0];
 		byte[] response="OK".getBytes(StandardCharsets.UTF_8);
 		byte data[]=Arrays.copyOfRange(in,1,in.length);
@@ -71,6 +71,17 @@ public class NodeServer extends Server implements Runnable{
 				io.println("Invalid Pair Submission for daughter "+pair.block.toString());
 				io.println(pair.tr.toString());
 			}
+		}else if(cmd==CMD_ADD_NODE) {
+			io.println("Node reporting: IP address "+ip);
+			int l=nodes.length();
+			boolean go=!ip.equals("68.4.23.94");
+			for(int i=0;i<l;i++){
+				if(nodes.get(i).equals(ip))
+					go=false;
+			}
+			if(go)nodes.add(ip);
+		}else if(cmd==CMD_GET_NODES) {
+			response=nodes.serialize();
 		}else if(cmd==CMD_ADD_TRANS) {
 			Transaction t=new Transaction(data);
 			if(t.verify()) {

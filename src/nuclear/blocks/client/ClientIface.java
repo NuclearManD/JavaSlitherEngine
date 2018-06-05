@@ -174,4 +174,29 @@ public class ClientIface {
 	public void close() {
 		client.disconnect();
 	}
+	public String[] getNodes(){
+		 byte[] req={NodeServer.CMD_GET_NODES,-1}; // pad request with extra byte.
+		 try{
+			 byte[] raw=client.poll(req);
+			 int cnt=0;
+			 for(byte i:raw){
+				 if(i==13)
+					 cnt++;
+			 }
+			 String[] out=new String[cnt];
+			 for(int i=0;i<cnt;i++){
+				 out[i]=new String();
+			 }
+			 cnt=0;
+			 for(byte i:raw){
+				 if(i==13)
+					 cnt++;
+				 else
+					 out[cnt]+=(char)i;
+			 }
+			 return out;
+		 }catch(Exception e){
+			 return new String[0];
+		 }
+	}
 }
