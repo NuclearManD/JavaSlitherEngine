@@ -9,27 +9,12 @@ public class Universe {
 	public static Entity player;
 	private static int time=0;
 	public static int conversion=1000; // units/km
-	public static void update() throws Exception {
-		/*for(int i=0;i<dimensions.size();i++){//Dimension dim:dimensions){
-			if(dimensions.get(i)!=null){
-				for(Dimension dim:dimensions){
-					if(dim!=null&&dimensions.get(i).getName()==dim.getName()){
-						dimensions.set(i, null);
-					}
-				}
-			}
-		}*/
-		try{
-			for(byte i=0;i<dimensions.size();i++){
-				if(dimensions.get(i)!=null)
-					dimensions.get(i).update();
-			}
-			time++;
-		}catch(Exception e){
-			e.printStackTrace();
-			io.println(dimensions.toString());
-			throw e;
+	public static void update() {
+		for(byte i=0;i<dimensions.size();i++){
+			if(dimensions.get(i)!=null)
+				dimensions.get(i).update();
 		}
+		time++;
 	}
 	public static void addPlayer(Entity e, int dimension) {
 		player=e;
