@@ -24,9 +24,10 @@ public class NodeServer extends Server implements Runnable{
 	public static final byte[] RESULT_SUCCESS = "OK".getBytes(StandardCharsets.UTF_8);
 	public static final byte CMD_GET_DAUGHTER = 3;
 	public static final byte CMD_GET_BLOCKS = 4;
-	public static final byte CMD_ADD_NODE = 5;
+	public static final byte CMD_ADD_NODE = 7;
 	public static final byte CMD_GET_NODES= 6;
 	private static final int RESPONSE_SIZE_LIMIT = 1024*1024;
+	public static final byte CMD_GET_BCLEN = 8;
 	public BlockchainBase blockchain;
 	byte[] pubkey;
 	private ECDSAKey key;
@@ -102,6 +103,8 @@ public class NodeServer extends Server implements Runnable{
 				response=new byte[1];
 				response[0]=0x55;
 			}
+		}else if(cmd==CMD_GET_BCLEN) {
+			response=SlitherS.longToBytes(blockchain.length());
 		}else if(cmd==CMD_GET_BLOCKS&&data.length==8){
 			int index=(int)SlitherS.bytesToLong(data);
 			if(index>=blockchain.length()){
