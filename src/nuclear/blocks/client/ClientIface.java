@@ -16,10 +16,13 @@ import nuclear.slitherio.SlitherS;
 import nuclear.slithernet.Client;
 
 public class ClientIface {
+	private static final byte[] MSG_GETBCLEN = {NodeServer.CMD_GET_BCLEN};
 	protected Client client;
 	private boolean netErr;
+	private String host;
 	public ClientIface(String host){
 		client=new Client(1152, host);
+		this.host=host;
 	}
 	public boolean uploadPair(DaughterPair pair){
 		byte[] packed=pair.serialize();
@@ -198,5 +201,15 @@ public class ClientIface {
 		 }catch(Exception e){
 			 return new String[0];
 		 }
+	}
+	public long getRemoteChainLength(){
+		try {
+			return SlitherS.bytesToLong(client.poll(MSG_GETBCLEN));
+		} catch (IOException e) {
+			return 0;
+		}
+	}
+	public String getHost() {
+		return host;
 	}
 }

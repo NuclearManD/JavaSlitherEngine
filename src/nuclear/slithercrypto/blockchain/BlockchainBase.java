@@ -1,15 +1,14 @@
 package nuclear.slithercrypto.blockchain;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import nuclear.slithercrypto.Crypt;
 import nuclear.slitherge.top.io;
 
 public abstract class BlockchainBase {
 	private Block current;
 	public abstract void addPair(DaughterPair pair);
-	public abstract byte[] readFile(String meta,byte[] pubAdr);
 	public abstract Block getDaughter(byte[] hash);
 	public abstract void addDaughter(Block d);
 	Iterable<Block> chain,daughters;
@@ -68,27 +67,78 @@ public abstract class BlockchainBase {
 	public void update() {
 		
 	}
-	public ArrayList<Transaction> getFilesOf(byte[] adr){
-		ArrayList<Transaction> out=new ArrayList<Transaction>();
-		for(Block i:chain) {
-			for(int j=0;j<i.numTransactions();j++) {
-				Transaction t=i.getTransaction(j);
-				if(t.type==Transaction.TRANSACTION_STORE_FILE&&Arrays.equals(t.pubKey,adr))
-					out.add(t);
-			}
+	ArrayList<AccountFileList> fsCache=new ArrayList<AccountFileList>();
+	public ArrayList<String> getFilesOf(byte[] adr){
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr))
+				return i.getFileNames();
 		}
-		return out;
+		AccountFileList q=new AccountFileList(adr,this);
+		fsCache.add(q);
+		return q.getFileNames();
 	}
-	public ArrayList<Transaction> getPagesOf(byte[] adr){
-		ArrayList<Transaction> out=new ArrayList<Transaction>();
-		for(Block i:chain) {
-			for(int j=0;j<i.numTransactions();j++) {
-				Transaction t=i.getTransaction(j);
-				if(t.type==Transaction.TRANSACTION_STORE_PAGE&&Arrays.equals(t.pubKey,adr))
-					out.add(t);
+	public ArrayList<String> getPagesOf(byte[] adr){
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr))
+				return i.getPageNames();
+		}
+		AccountFileList q=new AccountFileList(adr,this);
+		fsCache.add(q);
+		return q.getPageNames();
+	}
+	public ArrayList<String> getEncryptsOf(byte[] adr){
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr))
+				return i.getEncryptedNames();
+		}
+		AccountFileList q=new AccountFileList(adr,this);
+		fsCache.add(q);
+		return q.getEncryptedNames();
+	}
+	public byte[] readPage(String path, byte[] adr) {
+		byte[] hash=null;
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr)){
+				hash=i.getPageHash(path);
+				break;
 			}
 		}
-		return out;
+		if(hash==null){
+			AccountFileList q=new AccountFileList(adr,this);
+			fsCache.add(q);
+			hash=q.getPageHash(path);
+		}
+		return getDaughter(hash).getData();
+	}
+	public byte[] readFile(String path, byte[] adr) {
+		byte[] hash=null;
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr)){
+				hash=i.getFileHash(path);
+				break;
+			}
+		}
+		if(hash==null){
+			AccountFileList q=new AccountFileList(adr,this);
+			fsCache.add(q);
+			hash=q.getFileHash(path);
+		}
+		return getDaughter(hash).getData();
+	}
+	public byte[] readEncryptedFile(String path, byte[] adr,String password) {
+		byte[] hash=null;
+		for(AccountFileList i:fsCache){
+			if(i.equals(adr)){
+				hash=i.getEncryptedHash(path);
+				break;
+			}
+		}
+		if(hash==null){
+			AccountFileList q=new AccountFileList(adr,this);
+			fsCache.add(q);
+			hash=q.getEncryptedHash(path);
+		}
+		return Crypt.DecryptAES(getDaughter(hash).getData(),password);
 	}
 	public Block getBlockByHash(byte[] hash){
 		for(int i=0;i<length();i++){
@@ -149,17 +199,5 @@ public abstract class BlockchainBase {
 		double a=V*q.numTransactions()/8640000.0;
 		double r=-4/Math.pow(2, a*2.0)+4/Math.pow(2, a)+1/(L/1024.0+1);
 		return (int)(30.0/r);
-	}
-	public byte[] readPage(String path, byte[] address) {
-		for(int j=length()-1;j>=0;j--) {
-			Block block=getBlockByIndex(j);
-			for(int i=block.numTransactions()-1;i>=0;i--) {
-				Transaction t=block.getTransaction(i);
-				String tmeta=new String(t.getMeta(),StandardCharsets.UTF_8);
-				if(t.type==Transaction.TRANSACTION_STORE_PAGE&&Arrays.equals(t.pubKey, address)&&tmeta.equals(path))
-					return getDaughter(Arrays.copyOf(t.descriptor,32)).getData();
-			}
-		}
-		return null;
 	}
 }

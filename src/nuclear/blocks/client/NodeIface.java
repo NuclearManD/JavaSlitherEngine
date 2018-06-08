@@ -1,6 +1,7 @@
 package nuclear.blocks.client;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import nuclear.blocks.node.NodeServer;
 import nuclear.slithercrypto.blockchain.Block;
@@ -15,9 +16,9 @@ public class NodeIface extends MultiClientIface implements Runnable{
 	SlitherLog log;
 	public NodeIface(String[] hosts, BlockchainBase b, SlitherLog l) {
 		super(hosts);
-		reportNode();
 		bc=b;
 		log=l;
+		reportNode();
 	}
 
 	public void reportNode() {
@@ -27,12 +28,16 @@ public class NodeIface extends MultiClientIface implements Runnable{
 				i.client.poll(message);
 			} catch (IOException e) {
 				e.printStackTrace();
+				log.println("Error contacting node "+i.getHost());
 			}
 		}
 	}
 	
 	public void sync(BlockchainBase bc) {
-		downloadBlockchain(bc);
+		safe=false;
+		int g=downloadBlockchain(bc);
+		if(g==0)
+			return;
 		for(int i=lastBlock+1;i<bc.length();i++){
 			Block b=bc.getBlockByIndex(i);
 			for(int j=0;j<b.numTransactions();j++){
@@ -40,21 +45,27 @@ public class NodeIface extends MultiClientIface implements Runnable{
 				if(t.type==Transaction.TRANSACTION_STORE_ENCRYPTED||t.type==Transaction.TRANSACTION_STORE_FILE||t.type==Transaction.TRANSACTION_STORE_PAGE){
 					if(bc.getDaughter(t.getDaughterHash())==null){
 						Block d=downloadDaughter(t.getDaughterHash());
-						bc.addDaughter(d);
+						if(d!=null)
+							bc.addDaughter(d);
 					}
 				}
 			}
 		}
 		lastBlock=bc.length()-1;
+		safe=true;
+		log.println("Downloaded "+g+" blocks.");
 	}
-
+	private boolean safe=false;
 	public void run() {
+		log.println("Remote Nodes: "+Arrays.toString(getNodes()));
 		while(true){
-			io.waitMillis(5000);
-			log.println("Syncing with the remote(s)...");
-			sync(bc);
-			log.println("Done.");
+			io.waitMillis(500);
+			if(safe){
+				sync(bc);
+			}
 		}
 	}
-
+	public boolean safe(){
+		return safe;
+	}
 }

@@ -68,8 +68,19 @@ public class MultiClientIface{
 	}
 	public int downloadBlockchain(BlockchainBase manager){
 		int n=0;
+		new ArrayList<Block>();
+		int l=manager.length();
 		for(ClientIface i:ifaces){
-			n+=i.downloadBlockchain(manager);
+			long len=i.getRemoteChainLength();
+			if(len<=l)
+				continue;
+			ArrayList<Block> blocks=i.getBlocks(l);
+			if(blocks==null)
+				continue;
+			for(Block b:blocks){
+				if(!manager.addBlock(b))break;
+			}
+			l=manager.length();
 		}
 		return n;
 	}
@@ -79,7 +90,7 @@ public class MultiClientIface{
 	public void close() {
 		for(ClientIface i:ifaces)
 			i.close();
-	}
+	}/*
 	public String[] getNodes(){
 		ArrayList<String> out=new ArrayList<String>();
 		for(ClientIface i:ifaces){
@@ -95,6 +106,17 @@ public class MultiClientIface{
 				if(g)out.add(j);
 			}
 		}
-		return (String[])out.toArray();
+		String[] q=new String[out.size()];
+		out.toArray(q);
+		return q;
+	}*/
+	public String[] getNodes(){
+		ArrayList<String> out=new ArrayList<String>();
+		for(ClientIface i:ifaces){
+			out.add(i.getHost());
+		}
+		String[] q=new String[out.size()];
+		out.toArray(q);
+		return q;
 	}
 }
