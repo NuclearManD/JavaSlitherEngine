@@ -67,9 +67,9 @@ public class MultiClientIface{
 		return null;
 	}
 	public int downloadBlockchain(BlockchainBase manager){
-		int n=0;
+		int n=manager.length();
 		new ArrayList<Block>();
-		int l=manager.length();
+		int l=n;
 		for(ClientIface i:ifaces){
 			long len=i.getRemoteChainLength();
 			if(len<=l)
@@ -77,6 +77,11 @@ public class MultiClientIface{
 			ArrayList<Block> blocks=i.getBlocks(l);
 			if(blocks==null)
 				continue;
+			if(!manager.isNext(blocks.get(0))){
+				for(int j=l;j>-2;j--){
+					
+				}
+			}
 			for(Block b:blocks){
 				if(!manager.addBlock(b))break;
 			}

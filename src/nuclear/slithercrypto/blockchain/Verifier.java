@@ -73,4 +73,24 @@ public class Verifier {
 	public boolean registered(){
 		return registered;
 	}
+	public double getV(int index) {
+		int o=0;
+		for(int i=bc.length()-172800;i<bc.length();i++){
+			Block q=bc.getBlockByIndex(i);
+			if(equals(q.getMiner())){
+				o++;
+			}
+		}
+		return o;
+	}
+	public double getL(int index) {
+		int o=0;
+		for(int i=bc.length()-1024;i<bc.length();i++){
+			Block q=bc.getBlockByIndex(i);
+			if(equals(q.getMiner())){
+				o++;
+			}
+		}
+		return o;
+	}
 }

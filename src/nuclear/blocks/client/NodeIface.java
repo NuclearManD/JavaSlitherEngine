@@ -68,4 +68,12 @@ public class NodeIface extends MultiClientIface implements Runnable{
 	public boolean safe(){
 		return safe;
 	}
+	
+	public int downloadBlockchain(BlockchainBase manager){
+		int n=0;
+		for(ClientIface i:ifaces){
+			
+		}
+		return n;
+	}
 }

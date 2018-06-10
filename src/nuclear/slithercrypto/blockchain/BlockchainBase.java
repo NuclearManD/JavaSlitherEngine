@@ -174,6 +174,31 @@ public abstract class BlockchainBase {
 		}
 		return true;
 	}
+
+	public boolean isNext(Block block, int index){
+		if(!block.verify())
+			return false;
+		byte[] lsh=block.getLastHash();
+		byte[] empty=new byte[32];
+		Arrays.fill(empty, (byte)0);
+		if(Arrays.equals(lsh, empty)&&index==-1)
+			return true;
+		Block last=getBlockByIndex(index);
+		if(!Arrays.equals(lsh, last.getHash())){
+			return false;
+		}
+		int blockTime=(int) (block.getTimestamp()-last.getTimestamp());
+		if(blockTime<15){
+			return false;
+		}
+		byte[] miner=block.getMiner();
+		int priority=getPriorityAt(miner,index);
+		if(priority>blockTime||priority==100){
+			io.println("Priority Error: miner priority is "+priority+" and block time is "+blockTime);
+			return false;  // Not registered or priority incorrect.
+		}
+		return true;
+	}
 	
 	ArrayList<Verifier> verifierCache=new ArrayList<Verifier>();
 	
@@ -195,6 +220,28 @@ public abstract class BlockchainBase {
 		}
 		V=v.getV();
 		L=v.getL();
+		Block q=getBlockByIndex(length()-1);
+		double a=V*q.numTransactions()/8640000.0;
+		double r=-4/Math.pow(2, a*2.0)+4/Math.pow(2, a)+1/(L/1024.0+1);
+		return (int)(30.0/r);
+	}
+	public int getPriorityAt(byte[] miner, int index) {
+		double V=0,L=0;
+		Verifier v=null;
+		for(Verifier i:verifierCache){
+			if(i.equals(miner)){
+				v=i;
+				break;
+			}
+		}
+		if(v==null){
+			v=new Verifier(miner, this);
+			if(!v.registered())
+				return 100;
+			verifierCache.add(v);
+		}
+		V=v.getV(index);
+		L=v.getL(index);
 		Block q=getBlockByIndex(length()-1);
 		double a=V*q.numTransactions()/8640000.0;
 		double r=-4/Math.pow(2, a*2.0)+4/Math.pow(2, a)+1/(L/1024.0+1);
