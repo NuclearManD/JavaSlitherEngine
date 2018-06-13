@@ -48,4 +48,7 @@ public class Universe {
 	public static int getTimeStamp(){
 		return time;
 	}
+	public static void resetTime() {
+		time=0;
+	}
 }
