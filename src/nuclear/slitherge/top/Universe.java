@@ -45,4 +45,7 @@ public class Universe {
 			d2.getId();
 		}
 	}
+	public static int getTimeStamp(){
+		return time;
+	}
 }
