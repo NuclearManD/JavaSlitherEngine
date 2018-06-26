@@ -120,4 +120,7 @@ public abstract class Entity {
 	public boolean sameTeam(Entity e){
 		return e.team==team;
 	}
+	public double getDistance(Entity e){
+		return Math.sqrt(Math.pow(e.x+x,2)+Math.pow(e.y+y,2));
+	}
 }
