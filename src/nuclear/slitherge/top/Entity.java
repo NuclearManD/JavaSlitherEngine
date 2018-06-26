@@ -121,6 +121,6 @@ public abstract class Entity {
 		return e.team==team;
 	}
 	public double getDistance(Entity e){
-		return Math.sqrt(Math.pow(e.x+x,2)+Math.pow(e.y+y,2));
+		return Math.sqrt(Math.pow(e.x-x,2)+Math.pow(e.y-y,2));
 	}
 }
