@@ -117,4 +117,7 @@ public abstract class Entity {
 	public boolean isDead(){
 		return isDead;
 	}
+	public boolean sameTeam(Entity e){
+		return e.team==team;
+	}
 }
