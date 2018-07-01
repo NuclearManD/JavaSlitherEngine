@@ -49,6 +49,13 @@ public abstract class Entity {
 		y=yi;
 		onMove(tmp);
 	}
+	public void move(Position n){
+		Position tmp=new Position(dimension,x,y);
+		x=n.x;
+		y=n.y;
+		dimension=n.dim;
+		onMove(tmp);
+	}
 	public Position getPos(){
 		return new Position(dimension,x,y);
 	}

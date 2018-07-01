@@ -23,4 +23,35 @@ public class Position {
 	public String toCoords() {
 		return toCoords(x,y);
 	}
+	public double magnitude(){
+		return Math.sqrt(x*x+y*y);
+	}
+	public Position normalized(){
+		return div(magnitude());
+	}
+	public Position div(double a) {
+		return new Position(dim,x/a,y/a);
+	}
+	public Position mul(double a) {
+		return new Position(dim,x*a,y*a);
+	}
+	public Position sub(double a) {
+		return new Position(dim,x-a,y-a);
+	}
+	public Position add(double a) {
+		return new Position(dim,x+a,y+a);
+	}
+	public Position sub(Position a) {
+		return new Position(dim,x-a.x,y-a.y);
+	}
+	public Position add(Position a) {
+		return new Position(dim,x+a.x,y+a.y);
+	}
+	public double dp(Position a){
+		return x*a.x+y*a.y;
+	}
+	public Position rotate(double degrees){
+		degrees=degrees*Math.PI/180;
+		return new Position(dim,x*Math.cos(degrees)+y*Math.sin(degrees),y*Math.cos(degrees)+x*Math.sin(degrees));
+	}
 }
