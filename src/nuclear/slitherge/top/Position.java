@@ -57,9 +57,7 @@ public class Position {
 	public double degrees() {
 		if(y==0)
 			return 0;
-		double r=180.0*Math.atan(x/y)/Math.PI+180.0;
-		if(x<0 && y>0)
-			r=r+180;
+		double r=180.0*Math.atan2(y,x)/Math.PI+450;
 		return r;
 	}
 }

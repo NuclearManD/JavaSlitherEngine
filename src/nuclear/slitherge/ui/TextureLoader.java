@@ -41,6 +41,7 @@ public class TextureLoader {
 			}
 		}
 		int idx=(degrees%360)/9;
+		if(idx<0)idx+=9;
 		if(idx==0)
 			return getImage(name);
 		int i;
