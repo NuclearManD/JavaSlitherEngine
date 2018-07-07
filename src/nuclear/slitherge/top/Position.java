@@ -54,4 +54,12 @@ public class Position {
 		degrees=degrees*Math.PI/180;
 		return new Position(dim,x*Math.cos(degrees)+y*Math.sin(degrees),y*Math.cos(degrees)+x*Math.sin(degrees));
 	}
+	public double degrees() {
+		if(y==0)
+			return 0;
+		double r=180.0*Math.atan(x/y)/Math.PI+180.0;
+		if(x<0 && y>0)
+			r=r+180;
+		return r;
+	}
 }
