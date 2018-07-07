@@ -55,9 +55,13 @@ public class Position {
 		return new Position(dim,x*Math.cos(degrees)+y*Math.sin(degrees),y*Math.cos(degrees)+x*Math.sin(degrees));
 	}
 	public double degrees() {
-		if(y==0)
-			return 0;
-		double r=180.0*Math.atan2(y,x)/Math.PI+450;
+		double r=180.0*Math.atan2(y,x)/Math.PI+90;
+		if(r<0)r+=360;
+		return r;
+	}
+	public double degrees(Position a) {
+		double r=180.0*(Math.atan2(y,x)-Math.atan2(a.y,a.x))/Math.PI+90;
+		if(r<0)r+=360;
 		return r;
 	}
 }
