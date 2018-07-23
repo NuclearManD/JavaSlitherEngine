@@ -64,4 +64,7 @@ public class Position {
 		if(r<0)r+=360;
 		return r;
 	}
+	public String toString(){
+		return dim+":("+x+","+y+")";
+	}
 }
