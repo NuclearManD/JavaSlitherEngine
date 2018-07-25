@@ -62,4 +62,27 @@ public class TextureLoader {
 		}
 		return rots[idx].get(i);
 	}
+	public static synchronized int loadImage(String name){
+		int i;
+		for(i=0;i<indexes.size();i++){
+			if(indexes.get(i).equals(name))
+				break;
+		}
+		if(i==indexes.size()){
+			try {
+				images.add(ImageIO.read(new File(name)));
+			} catch (IOException e) {
+				indexes.add(name);
+				images.add(null);
+				return images.size()-1;
+			}
+			indexes.add(name);
+		}
+		return i;
+	}
+	public static synchronized BufferedImage getImage(int id){
+		if(id>=images.size())
+			return null;
+		return images.get(id);
+	}
 }
