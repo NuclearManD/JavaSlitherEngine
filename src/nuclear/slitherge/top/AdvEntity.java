@@ -9,6 +9,7 @@ public abstract class AdvEntity extends Entity {
 		super(dimt, x2, y2);
 	}
 	public void move(double xi, double yi){
+		Rectangle hitbox=getHitbox();
 		if(this.dimension>-1)
 			for(Thing i:getDimension().allThings()){
 				if(i instanceof Collidable){
@@ -19,6 +20,7 @@ public abstract class AdvEntity extends Entity {
 		super.move(xi, yi);
 	}
 	public void move(Position n, Position predict){
+		Rectangle hitbox=getHitbox();
 		for(Thing i:getDimension().allThings()){
 			if(i instanceof Collidable){
 				if(((Collidable) i).collides(n))
@@ -37,6 +39,7 @@ public abstract class AdvEntity extends Entity {
 		super.move(n);
 	}
 	public void move(Position n){
+		Rectangle hitbox=getHitbox();
 		for(Thing i:getDimension().allThings()){
 			if(i instanceof Collidable){
 				if(((Collidable) i).collides(n))
@@ -59,5 +62,7 @@ public abstract class AdvEntity extends Entity {
 		return Math.sqrt(Math.pow(t.x-x,2)+Math.pow(t.y-y,2));
 	}
 	public abstract void doDamage(int damage, Entity e);
-	
+	public Rectangle getHitbox(){
+		return new Rectangle(1,1);
+	}
 }
