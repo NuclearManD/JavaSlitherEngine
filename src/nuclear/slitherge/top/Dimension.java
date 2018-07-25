@@ -5,6 +5,10 @@ import java.util.ArrayList;
 public class Dimension {
 	protected ArrayList<Entity> entities= new ArrayList<Entity>();
 	protected ArrayList<Thing> things= new ArrayList<Thing>();
+
+	protected ArrayList<Entity> entities_nadd= new ArrayList<Entity>();
+	protected ArrayList<Thing> things_nadd= new ArrayList<Thing>();
+	
 	private String name="in the unknown";
 	protected int id=-1;
 	public Dimension(String n) {
@@ -25,14 +29,20 @@ public class Dimension {
 			things.get(x).update();
 		}
 		safeUpdate();
+		for(Entity e:entities_nadd)
+			entities.add(e);
+		for(Thing e:things_nadd)
+			things.add(e);
+		entities_nadd.clear();
+		things_nadd.clear();
 	}
 	protected void safeUpdate(){}
 	public void insertObject(Thing w) {
-		things.add(w);
+		things_nadd.add(w);
 	}
 
 	public void addEntity(Entity e) {
-		entities.add(e);
+		entities_nadd.add(e);
 		e.dimension=id;
 	}
 
