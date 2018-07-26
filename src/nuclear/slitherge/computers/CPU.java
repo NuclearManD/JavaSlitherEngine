@@ -6,7 +6,7 @@ import nuclear.slitherge.top.io;
 
 public abstract class CPU extends Thing {
 	private int tick_count;
-	private ComputerInterfaceHandler iface;
+	protected ComputerInterfaceHandler iface;
 	public CPU(double x, double y, int ticks_per_update){
 		super(x, y);
 		tick_count=ticks_per_update;
