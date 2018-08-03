@@ -8,6 +8,8 @@ public class Dimension {
 
 	protected ArrayList<Entity> entities_nadd= new ArrayList<Entity>();
 	protected ArrayList<Thing> things_nadd= new ArrayList<Thing>();
+	protected ArrayList<Entity> entities_nrm= new ArrayList<Entity>();
+	protected ArrayList<Thing> things_nrm= new ArrayList<Thing>();
 	
 	private String name="in the unknown";
 	protected int id=-1;
@@ -16,6 +18,20 @@ public class Dimension {
 	}
 	public void setId(){
 		id=Universe.dimensions.indexOf(this);
+	}
+	private synchronized void update_lists(){
+		for(Entity e:entities_nadd)
+			entities.add(e);
+		for(Thing e:things_nadd)
+			things.add(e);
+		for(Entity e:entities_nrm)
+			entities.remove(e);
+		for(Thing e:things_nrm)
+			things.remove(e);
+		entities_nadd.clear();
+		things_nadd.clear();
+		entities_nrm.clear();
+		things_nrm.clear();
 	}
 	public void update(){
 		if(id==-1)
@@ -29,12 +45,7 @@ public class Dimension {
 			things.get(x).update();
 		}
 		safeUpdate();
-		for(Entity e:entities_nadd)
-			entities.add(e);
-		for(Thing e:things_nadd)
-			things.add(e);
-		entities_nadd.clear();
-		things_nadd.clear();
+		update_lists();
 	}
 	protected void safeUpdate(){}
 	public void insertObject(Thing w) {
@@ -109,11 +120,11 @@ public class Dimension {
 		return things.contains(ssc);
 	}
 	public Thing removeObject(Thing ssc) {
-		things.remove(ssc);
+		things_nrm.add(ssc);
 		return ssc;
 	}
 	public Entity removeEntity(Entity entity) {
-		entities.remove(entity);
+		entities_nrm.add(entity);
 		return entity;
 	}
 	//public boolean objectPresent(Thing ssc, Entity c) {
