@@ -8,7 +8,7 @@ import nuclear.slitherge.physics.Vector2;
 
 public abstract class Entity {
 	protected String name="";
-	protected int health=1; // at least 1 starting health
+	protected double health=1; // at least 1 starting health
 	protected int armor;
 	protected int attack;
 	protected Thing[] inv;
@@ -39,7 +39,7 @@ public abstract class Entity {
 		isDead=true;
 		onDeath();
 	}
-	public int getHealth(){
+	public double getHealth(){
 		return health;
 	}
 	public abstract void update();
