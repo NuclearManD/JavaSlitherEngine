@@ -40,10 +40,15 @@ public class Rectangle {
 		return y;
 	}
 	public boolean intersects(Rectangle hitbox) {
-		if (hitbox.x > (x+width) || x > (hitbox.x+hitbox.width))
+		/*if (hitbox.x > (x+width) || x > (hitbox.x+hitbox.width))
 	        return false;
 		if (hitbox.y > (y+height) || y > (hitbox.y+hitbox.height))
 	        return false;
-		return true;
+		return true;*/
+		
+		
+		// from https://stackoverflow.com/questions/23302698/java-check-if-two-rectangles-overlap-at-any-point
+		// bc I hate rects :(
+		return x < hitbox.x + hitbox.width && x + width > hitbox.x && y < hitbox.y + hitbox.height && y + height > hitbox.y;
 	}
 }
