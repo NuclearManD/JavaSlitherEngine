@@ -7,7 +7,7 @@ public class Universe {
 	public static final double tick_len = 600000;
 	public static ArrayList<Dimension> dimensions= new ArrayList<Dimension>();
 	public static Entity player;
-	private static int time=0;
+	protected static int time=0;
 	public static int conversion=1000; // units/km
 	public static void update() {
 		for(byte i=0;i<dimensions.size();i++){

@@ -65,7 +65,7 @@ public abstract class Entity {
 	public double getX() {
 		return x;
 	}
-	protected Dimension getDimension() {
+	public Dimension getDimension() {
 		return Universe.dimensions.get(dimension);
 	}
 	public double getY() {
