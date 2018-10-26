@@ -89,6 +89,13 @@ public abstract class Entity {
 			entity.onReceiveMessage(msg,this);
 		}
 	}
+
+	protected void sendMessageAnon(String msg) {
+		ArrayList<Entity> e=getDimension().getEntities(this);
+		for (Entity entity : e) {
+			entity.onReceiveMessage(msg,null);
+		}
+	}
 	public String getName() {
 		return name;
 	}
