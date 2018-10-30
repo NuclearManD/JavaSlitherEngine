@@ -3,7 +3,7 @@ package nuclear.slitherge.top;
 
 public abstract class AdvEntity extends Entity {
 	// this class basically handles collisions right now.  More may come later.
-	protected boolean pathneeded = false;
+	//protected boolean pathneeded = false;
 	protected Thing collidedwith;
 	public AdvEntity(int dimt, double x2, double y2) {
 		super(dimt, x2, y2);
@@ -30,13 +30,13 @@ public abstract class AdvEntity extends Entity {
 				if(((Collidable) i).collides(n))
 				{
 					collidedwith = i;
-					pathneeded = true;
+					//pathneeded = true;
 					return;
 				}
 				if(((Collidable) i).collides(predict))
 				{
 					collidedwith = i;
-					pathneeded = true;
+					//pathneeded = true;
 				}
 			}
 		}
@@ -51,7 +51,7 @@ public abstract class AdvEntity extends Entity {
 				if(((Collidable) i).collides(hitbox))
 				{
 					collidedwith = i;
-					pathneeded = true;
+					//pathneeded = true;
 					return;
 				}
 			}
