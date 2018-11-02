@@ -119,4 +119,11 @@ public class Dimension {
 	public void setName(String n){
 		name=n;
 	}
+	public ArrayList<Entity> getEntities(double x, double y,double range) {
+		ArrayList<Entity> tmp = new ArrayList<Entity>();
+		for(Entity e : entities){
+			if(e.getPos().sub(new Position(0,x,y)).magnitude()<range)tmp.add(e);
+		}
+		return tmp;
+	}
 }

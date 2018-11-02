@@ -12,7 +12,7 @@ public abstract class AdvEntity extends Entity {
 		hitbox.y=yi-getHeight()/2;
 		for(Thing i:getDimension().getThings((int)Math.round(xi),(int)Math.round(yi))){
 			if(i instanceof Collidable){
-				if(((Collidable) i).collides(hitbox))
+				if(((Collidable) i).collidable())
 					return;
 			}
 		}
