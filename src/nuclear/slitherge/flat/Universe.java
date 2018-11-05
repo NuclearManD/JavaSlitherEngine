@@ -53,6 +53,12 @@ public class Universe {
 	public static Position getThisPosition() {
 		return new Position(dimCurrent, currentDimension().current_x, currentDimension().current_y);
 	}
+	public static int getX(){
+		return currentDimension().current_x;
+	}
+	public static int getY(){
+		return currentDimension().current_y;
+	}
 	public static int currentDimensionId() {
 		return dimCurrent;
 	}
