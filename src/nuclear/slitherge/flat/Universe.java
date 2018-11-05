@@ -1,6 +1,8 @@
 package nuclear.slitherge.flat;
 import java.util.ArrayList;
 
+import nuclear.slitherge.top.Position;
+
 
 public class Universe {
 	public static final double max_pos = 1000000000000.0;
@@ -9,11 +11,11 @@ public class Universe {
 	public static Entity player;
 	protected static int time=0;
 	public static int conversion=1000; // units/km
-	private static Dimension dimCurrent;
+	private static int dimCurrent;
 	public static void update() {
 		for(byte i=0;i<dimensions.size();i++){
 			if(dimensions.get(i)!=null){
-				dimCurrent = dimensions.get(i);
+				dimCurrent = i;
 				dimensions.get(i).update();
 			}
 		}
@@ -45,6 +47,13 @@ public class Universe {
 		time=0;
 	}
 	public static Dimension currentDimension() {
+		return dimensions.get(dimCurrent);
+	}
+
+	public static Position getThisPosition() {
+		return new Position(dimCurrent, currentDimension().current_x, currentDimension().current_y);
+	}
+	public static int currentDimensionId() {
 		return dimCurrent;
 	}
 }

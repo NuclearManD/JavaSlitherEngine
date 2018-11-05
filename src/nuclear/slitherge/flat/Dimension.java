@@ -6,6 +6,7 @@ import nuclear.slitherge.top.Position;
 
 public class Dimension {
 	
+	public int current_y, current_x;
 	private int x_size = -1;
 	private int y_size = -1;
 	
@@ -19,7 +20,19 @@ public class Dimension {
 	
 	private String name="in the unknown";
 	protected int id=-1;
-	public Dimension(String n) {
+	public Dimension(String n, int xs, int ys) {
+		x_size=xs;
+		y_size=ys;
+		things_nrm = new ArrayList[xs][ys];
+		things_nadd = new ArrayList[xs][ys];
+		things = new ArrayList[xs][ys];
+		for(int x=0;x<x_size;x++){
+			for(int y=0;y<y_size;y++){
+				things_nadd[x][y]=new ArrayList<Thing>();
+				things_nrm[x][y]=new ArrayList<Thing>();
+				things[x][y]=new ArrayList<Thing>();
+			}
+		}
 		name=n;
 	}
 	public void setId(){
@@ -55,7 +68,9 @@ public class Dimension {
 			e.update();
 		}
 		for(int x=0;x<x_size;x++){
+			current_x=x;
 			for(int y=0;y<y_size;y++){
+				current_y=y;
 				for(Thing e:things[x][y])
 					e.update();
 			}
@@ -81,6 +96,7 @@ public class Dimension {
 		return null;
 	}
 	public ArrayList<Thing> getThings(int x, int y){
+		if(x<0 || y<0)return new ArrayList<Thing>();
 		return things[x][y];
 	}
 	public Thing removeObject(int x, int y, String name){
@@ -125,5 +141,14 @@ public class Dimension {
 			if(e.getPos().sub(new Position(0,x,y)).magnitude()<range)tmp.add(e);
 		}
 		return tmp;
+	}
+	public ArrayList<Thing> allThings() {
+		ArrayList<Thing> output = new ArrayList<Thing>();
+		for(int x=0;x<x_size;x++){
+			for(int y=0;y<y_size;y++){
+				for(Thing e:things[x][y])output.add(e);
+			}
+		}
+		return output;
 	}
 }

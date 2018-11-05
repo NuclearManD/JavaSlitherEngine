@@ -32,7 +32,7 @@ public abstract class Entity {
 		onMove();
 	}
 	public Position getPos(){
-		return new Position(-1,x,y);
+		return new Position(Universe.currentDimensionId(),x,y);
 	}
 	public Vector2 getVector(){
 		return new Vector2(x,y);
