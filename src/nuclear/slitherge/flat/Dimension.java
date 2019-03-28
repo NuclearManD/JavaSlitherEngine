@@ -13,9 +13,9 @@ public class Dimension {
 	protected ArrayList<Entity> entities= new ArrayList<Entity>();
 	protected ArrayList<Thing>[][] things;
 
-	protected ArrayList<Entity> entities_nadd= new ArrayList<Entity>();
+	private ArrayList<Entity> entities_nadd= new ArrayList<Entity>();
 	protected ArrayList<Thing>[][] things_nadd;
-	protected ArrayList<Entity> entities_nrm= new ArrayList<Entity>();
+	private ArrayList<Entity> entities_nrm= new ArrayList<Entity>();
 	protected ArrayList<Thing>[][] things_nrm;
 	
 	private String name="in the unknown";
@@ -38,33 +38,53 @@ public class Dimension {
 	public void setId(){
 		id=Universe.dimensions.indexOf(this);
 	}
-	private synchronized void update_lists(){
-		for(Entity e:entities_nadd)
-			entities.add(e);
-		for(int x=0;x<x_size;x++){
-			for(int y=0;y<y_size;y++){
-				for(Thing e:things_nadd[x][y])
-					things[x][y].add(e);
-				things_nadd[x][y].clear();
-			}
+	private boolean isUpdatingLists = false;
+	private boolean entityListDirty = false;
+	private boolean thingListDirty = false;
+	private boolean isListLocked = false;
+	public boolean isUpdatingLists() {
+		return isUpdatingLists;
+	}
+	protected synchronized void update_lists(){
+		while(isListLocked)Thread.yield();
+		if(entityListDirty) {
+			isUpdatingLists = true;
+			for(Entity e:entities_nadd)
+				entities.add(e);
+			for(Entity e:entities_nrm)
+				entities.remove(e);
+			entities_nadd.clear();
+			entities_nrm.clear();
+			entityListDirty = false;
 		}
-		for(Entity e:entities_nrm)
-			entities.remove(e);
-		for(int x=0;x<x_size;x++){
-			for(int y=0;y<y_size;y++){
-				for(Thing e:things_nrm[x][y])
-					things[x][y].remove(e);
-				things_nrm[x][y].clear();
+		if(thingListDirty) {
+			isUpdatingLists = true;
+			for(int x=0;x<x_size;x++){
+				for(int y=0;y<y_size;y++){
+					for(Thing e:things_nrm[x][y])
+						things[x][y].remove(e);
+					things_nrm[x][y].clear();
+				}
 			}
+			for(int x=0;x<x_size;x++){
+				for(int y=0;y<y_size;y++){
+					for(Thing e:things_nadd[x][y])
+						things[x][y].add(e);
+					things_nadd[x][y].clear();
+				}
+			}
+			thingListDirty  = false;
 		}
-		entities_nadd.clear();
-		entities_nrm.clear();
+		isUpdatingLists = false;
 	}
 	public void update(){
+		while(isUpdatingLists)Thread.yield();
 		if(id==-1)
 			setId();
 		for(int x=0;x<entities.size();x++){
 			Entity e =entities.get(x);
+			e.our_dim=this;
+			e.our_dim_id = Universe.dimCurrent;
 			e.update();
 		}
 		for(int x=0;x<x_size;x++){
@@ -81,10 +101,13 @@ public class Dimension {
 	protected void safeUpdate(){}
 	public void insertObject(int x, int y, Thing w) {
 		things_nadd[x][y].add(w);
+		thingListDirty = true;
 	}
 
 	public void addEntity(Entity e) {
 		entities_nadd.add(e);
+		e.our_dim=this;
+		entityListDirty=true;
 	}
 
 	public Entity find(int dim, String s) {
@@ -96,7 +119,7 @@ public class Dimension {
 		return null;
 	}
 	public ArrayList<Thing> getThings(int x, int y){
-		if(x<0 || y<0)return new ArrayList<Thing>();
+		if(x<0 || y<0 || x>=x_size || y>=y_size)return new ArrayList<Thing>();
 		return things[x][y];
 	}
 	public Thing removeObject(int x, int y, String name){
@@ -104,6 +127,7 @@ public class Dimension {
 			if(things[x][y].get(i).name.equals(name)){
 				Thing tmp=things[x][y].get(i);
 				things[x][y].remove(i);
+				thingListDirty = true;
 				return tmp;
 			}
 		}
@@ -111,10 +135,12 @@ public class Dimension {
 	}
 	public Thing removeObject(int x, int y, Thing ssc) {
 		things_nrm[x][y].add(ssc);
+		thingListDirty = true;
 		return ssc;
 	}
 	public Entity removeEntity(Entity entity) {
 		entities_nrm.add(entity);
+		entityListDirty=true;
 		return entity;
 	}
 	public int getId() {
@@ -150,5 +176,17 @@ public class Dimension {
 			}
 		}
 		return output;
+	}
+	public void lockLists() {
+		isListLocked = true;
+	}
+	public void unlockLists() {
+		isListLocked = false;
+	}
+	public int getYSize() {
+		return y_size;
+	}
+	public int getXSize() {
+		return x_size;
 	}
 }

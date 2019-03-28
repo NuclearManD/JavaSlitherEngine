@@ -12,6 +12,8 @@ public abstract class Entity {
 	protected double health=1; // at least 1 starting health
 	protected double x, y;
 	protected double audioRange = 15;
+	Dimension our_dim;
+	int our_dim_id = -1;
 	public Entity(double x2, double y2){
 		x=x2;
 		y=y2;
@@ -26,13 +28,14 @@ public abstract class Entity {
 		return health;
 	}
 	public abstract void update();
-	public void move(double xi, double yi){
+	public boolean move(double xi, double yi){
 		x=xi;
 		y=yi;
 		onMove();
+		return true;
 	}
 	public Position getPos(){
-		return new Position(Universe.currentDimensionId(),x,y);
+		return new Position(our_dim_id,x,y);
 	}
 	public Vector2 getVector(){
 		return new Vector2(x,y);
@@ -41,7 +44,8 @@ public abstract class Entity {
 		return x;
 	}
 	public Dimension getDimension() {
-		return Universe.currentDimension();
+		if(our_dim==null)return Universe.currentDimension();
+		return our_dim;
 	}
 	public double getY() {
 		return y;
@@ -49,14 +53,16 @@ public abstract class Entity {
 	protected void onMove() {
 		
 	}
-	public void move(int dim, double x2, double y2) {
+	public boolean move(int dim, double x2, double y2) {
 		for(Dimension i:Universe.dimensions){
 			if(i.entities.contains(this))i.removeEntity(this);
 		}
 		Universe.dimensions.get(dim).addEntity(this);
+		
 		x=x2;
 		y=y2;
 		onMove();
+		return true;
 	}
 	protected void sendMessage(String msg){
 		ArrayList<Entity> e=getDimension().allEntities();

@@ -11,7 +11,7 @@ public class Universe {
 	public static Entity player;
 	protected static int time=0;
 	public static int conversion=1000; // units/km
-	private static int dimCurrent;
+	protected static int dimCurrent;
 	public static void update() {
 		for(byte i=0;i<dimensions.size();i++){
 			if(dimensions.get(i)!=null){
